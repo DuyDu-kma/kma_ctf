@@ -6,6 +6,10 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
+			<img src="../themes/core/static/img/avatar.jpg" alt="Avatar" 
+				style="vertical-align: middle;width: 155px;
+				height: 140px;
+				border-radius: 50%;">
 			<h1 id="user-id" user-id="{{ user.id }}">{{ user.name }}</h1>
 
 			{% if user.team_id %}

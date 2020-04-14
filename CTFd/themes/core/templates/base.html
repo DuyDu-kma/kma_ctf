@@ -37,7 +37,7 @@
 				{% if get_ctf_logo() %}
 				<img class="img-responsive ctf_logo" src="{{ url_for('views.files', path=get_ctf_logo()) }}" height="25" alt="{{ get_ctf_name() }}">
 				{% else %}
-				<img class="img-responsive ctf_logo" src="themes/core/static/img/kmalogo3.png" height="25" alt="{{ get_ctf_name() }}">
+				<img class="img-responsive ctf_logo" src="../themes/core/static/img/kmalogo3.png" height="25" alt="{{ get_ctf_name() }}">
 				{% endif %}
 			</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
@@ -144,7 +144,7 @@
 									<i class="fas fa-sign-out-alt d-none d-md-block d-lg-none"></i>
 								</span>
 								<span class="d-sm-block d-md-none d-lg-block">
-									<i class="fas fa-sign-out-alt pr-1"></i><span class="d-lg-none">Logout</span>
+									<i class="fas fa-sign-out-alt pr-1"></i><span>Sign out</span>
 								</span>
 							</a>
 						</li>
