@@ -1,3 +1,4 @@
+import os
 from CTFd import create_app
 # import argparse
 
@@ -29,4 +30,4 @@ app = create_app()
 #     print(" * Flask profiling running at http://127.0.0.1:4000/flask-profiler/")
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True, host="0.0.0.0")
+    app.run(debug=True, threaded=True, host="0.0.0.0", port=os.getenv("PORT") or 5000)
