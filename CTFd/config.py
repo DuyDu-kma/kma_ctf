@@ -63,9 +63,10 @@ class Config(object):
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     """
     SECRET_KEY = os.getenv("SECRET_KEY") or key
-    DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///{}/ctfd.db".format(
-        os.path.dirname(os.path.abspath(__file__))
-    )
+    # DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///{}/ctfd.db".format(
+    #     os.path.dirname(os.path.abspath(__file__))
+    # )
+    DATABASE_URL="postgres://deegngyryhhqie:c746948e4996fdfa9657e0df89fd9630c3e3b82d4f0c73af2106e7dfad5335ac@ec2-18-233-137-77.compute-1.amazonaws.com:5432/ddhft7a2esfghv"
     REDIS_URL = os.getenv("REDIS_URL")
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
