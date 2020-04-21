@@ -138,9 +138,9 @@ def setup():
 
             index = """<div>
     <div style="width: 108.6%;">
-        <img class="w-100 mx-auto d-block" src="themes/core/static/img/logo1.png" />
+        <img class="w-100 mx-auto d-block" src="themes/core/static/img/logo1.PNG" />
         <img class="w-100 mx-auto d-block" src="themes/core/static/img/logo4.PNG" />
-        <img class="w-100 mx-auto d-block" src="themes/core/static/img/logo2.png" />
+        <img class="w-100 mx-auto d-block" src="themes/core/static/img/logo2.PNG" />
     </div>
 </div>""".format(
                 request.script_root
