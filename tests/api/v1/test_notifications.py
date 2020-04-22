@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Notifications
+from KMActf.models import Notifications
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

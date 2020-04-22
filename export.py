@@ -1,6 +1,6 @@
-from CTFd import create_app
-from CTFd.utils import config
-from CTFd.utils.exports import export_ctf
+from KMActf import create_app
+from KMActf.utils import config
+from KMActf.utils.exports import export_ctf
 
 import datetime
 import sys

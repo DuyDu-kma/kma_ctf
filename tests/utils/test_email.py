@@ -4,8 +4,8 @@ import requests
 from freezegun import freeze_time
 from mock import Mock, patch
 
-from CTFd.utils import get_config, set_config
-from CTFd.utils.email import (
+from KMActf.utils import get_config, set_config
+from KMActf.utils.email import (
     sendmail,
     verify_email_address,
     successful_registration_notification,
@@ -110,8 +110,8 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd <noreply@ctfd.io>",
-            "subject": "Message from CTFd",
+            "from": "KMActf <noreply@ctfd.io>",
+            "subject": "Message from KMActf",
         }
 
         assert fake_response.status_code == 200
@@ -157,8 +157,8 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd <noreply@ctfd.io>",
-            "subject": "Message from CTFd",
+            "from": "KMActf <noreply@ctfd.io>",
+            "subject": "Message from KMActf",
         }
 
         assert fake_response.status_code == 200
@@ -191,7 +191,7 @@ def test_verify_email(mock_smtp):
         # This is currently not actually validated
         msg = (
             "Please click the following link to confirm"
-            " your email address for CTFd:"
+            " your email address for KMActf:"
             " http://localhost/confirm/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
         )
 
@@ -231,7 +231,7 @@ def test_successful_registration_email(mock_smtp):
 
         successful_registration_notification(to_addr)
 
-        msg = "You've successfully registered for CTFd!"
+        msg = "You've successfully registered for KMActf!"
 
         email_msg = MIMEText(msg)
         email_msg["Subject"] = "Successfully registered for {ctf_name}".format(

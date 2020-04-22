@@ -1,8 +1,8 @@
 """
 python import.py export.zip
 """
-from CTFd import create_app
-from CTFd.utils.exports import import_ctf
+from KMActf import create_app
+from KMActf.utils.exports import import_ctf
 
 import sys
 

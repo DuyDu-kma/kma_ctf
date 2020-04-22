@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Challenges
-from CTFd.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
+from KMActf.models import Challenges
+from KMActf.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
 from tests.helpers import (
     FakeRequest,
     create_ctfd,

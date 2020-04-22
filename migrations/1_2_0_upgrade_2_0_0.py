@@ -7,9 +7,9 @@ import dataset
 from six.moves import input, string_types
 from sqlalchemy_utils import drop_database
 
-from CTFd import config, create_app
+from KMActf import config, create_app
 
-# This is important to allow access to the CTFd application factory
+# This is important to allow access to the KMActf application factory
 sys.path.append(os.getcwd())
 
 
@@ -29,11 +29,11 @@ if __name__ == "__main__":
     print("/*\\ Migrating your database to 2.0.0 can potentially lose data./*\\")
     print(
         """/*\\ Please be sure to back up all data by:
-        * creating a CTFd export
+        * creating a KMActf export
         * creating a dump of your actual database
-        * and backing up the CTFd source code directory"""
+        * and backing up the KMActf source code directory"""
     )
-    print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
+    print("/*\\ KMActf maintainers are not responsible for any data loss! /*\\")
     if input("Run database migrations (Y/N)").lower().strip() == "y":
         pass
     else:
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     for unlock in old_data["unlocks"]:
         unlock["user_id"] = unlock.pop(
             "teamid"
-        )  # This is intentional as previous CTFds are effectively in user mode
+        )  # This is intentional as previous KMActfs are effectively in user mode
         unlock["target"] = unlock.pop("itemid")
         unlock["type"] = unlock.pop("model")
         new_conn["unlocks"].insert(dict(unlock))
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     for award in old_data["awards"]:
         award["user_id"] = award.pop(
             "teamid"
-        )  # This is intentional as previous CTFds are effectively in user mode
+        )  # This is intentional as previous KMActfs are effectively in user mode
         new_conn["awards"].insert(dict(award))
     del old_data["awards"]
 

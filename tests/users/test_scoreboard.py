@@ -3,7 +3,7 @@
 
 from freezegun import freeze_time
 
-from CTFd.models import Users
+from KMActf.models import Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

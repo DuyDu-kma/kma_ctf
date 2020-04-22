@@ -4,7 +4,7 @@ import string
 
 import six
 
-from CTFd.utils.encoding import base64decode, base64encode, hexdecode, hexencode
+from KMActf.utils.encoding import base64decode, base64encode, hexdecode, hexencode
 
 
 def test_hexencode():

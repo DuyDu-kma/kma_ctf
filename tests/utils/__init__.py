@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.utils import get_config, set_config
+from KMActf.utils import get_config, set_config
 from tests.helpers import create_ctfd, destroy_ctfd
 
 

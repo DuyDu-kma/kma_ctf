@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Users
-from CTFd.utils import set_config
+from KMActf.models import Teams, Users
+from KMActf.utils import set_config
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

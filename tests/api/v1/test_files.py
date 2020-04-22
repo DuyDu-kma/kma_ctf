@@ -4,7 +4,7 @@
 import os
 from io import BytesIO
 
-from CTFd.models import ChallengeFiles, Challenges, Files
+from KMActf.models import ChallengeFiles, Challenges, Files
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

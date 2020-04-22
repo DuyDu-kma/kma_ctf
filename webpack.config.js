@@ -58,13 +58,13 @@ function getJSConfig(root, type, entries, mode) {
   const chunk_file = `[name].${ext}.chunk.js`
 
   for (let key in entries) {
-    out[key] = path.resolve(__dirname, 'CTFd', root, entries[key])
+    out[key] = path.resolve(__dirname, 'KMActf', root, entries[key])
   }
 
   return {
     entry: out,
     output: {
-      path: path.resolve(__dirname, 'CTFd', root, 'static', type),
+      path: path.resolve(__dirname, 'KMActf', root, 'static', type),
       publicPath: '/' + root + '/static/' + type,
       filename: `[name].${ext}.js`,
       chunkFilename: chunk_file,
@@ -140,7 +140,7 @@ function getJSConfig(root, type, entries, mode) {
       // Pretty nasty hack, would be a little better if this was purely JS
       new WebpackShellPlugin({
         onBuildEnd:[
-          mode == 'development' ? 'echo Skipping JS stub generation' : 'python3 -c \'exec(\"\"\"\nimport glob\nimport os\n\nstatic_js_dirs = [\n    "CTFd/themes/core/static/js/**/*.dev.js",\n    "CTFd/themes/admin/static/js/**/*.dev.js",\n]\n\nfor js_dir in static_js_dirs:\n    for path in glob.glob(js_dir, recursive=True):\n        if path.endswith(".dev.js"):\n            path = path.replace(".dev.js", ".min.js")\n            if os.path.isfile(path) is False:\n                open(path, "a").close()\n\"\"\")\''
+          mode == 'development' ? 'echo Skipping JS stub generation' : 'python3 -c \'exec(\"\"\"\nimport glob\nimport os\n\nstatic_js_dirs = [\n    "KMActf/themes/core/static/js/**/*.dev.js",\n    "KMActf/themes/admin/static/js/**/*.dev.js",\n]\n\nfor js_dir in static_js_dirs:\n    for path in glob.glob(js_dir, recursive=True):\n        if path.endswith(".dev.js"):\n            path = path.replace(".dev.js", ".min.js")\n            if os.path.isfile(path) is False:\n                open(path, "a").close()\n\"\"\")\''
         ],
         safe: true,
       }),
@@ -148,7 +148,7 @@ function getJSConfig(root, type, entries, mode) {
     resolve: {
       extensions: ['.js'],
       alias: {
-        core: path.resolve(__dirname, 'CTFd/themes/core/assets/js/'),
+        core: path.resolve(__dirname, 'KMActf/themes/core/assets/js/'),
       },
     },
   }
@@ -161,13 +161,13 @@ function getCSSConfig(root, type, entries, mode) {
   const chunk_file = `[id].${ext}.css`
 
   for (let key in entries) {
-    out[key] = path.resolve(__dirname, 'CTFd', root, entries[key])
+    out[key] = path.resolve(__dirname, 'KMActf', root, entries[key])
   }
 
   return {
     entry: out,
     output: {
-      path: path.resolve(__dirname, 'CTFd', root, 'static', type),
+      path: path.resolve(__dirname, 'KMActf', root, 'static', type),
       publicPath: '/' + root + '/static/' + type,
     },
     optimization: {
@@ -228,7 +228,7 @@ function getCSSConfig(root, type, entries, mode) {
     resolve: {
       extensions: ['.css'],
       alias: {
-        core: path.resolve(__dirname, 'CTFd/themes/core/assets/css/'),
+        core: path.resolve(__dirname, 'KMActf/themes/core/assets/css/'),
       },
     },
     plugins: [

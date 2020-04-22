@@ -12,13 +12,13 @@ services:
       - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
       - REDIS_URL=redis://cache:6379
       - WORKERS=1
-      - LOG_FOLDER=/var/log/CTFd
+      - LOG_FOLDER=/var/log/KMActf
       - ACCESS_LOG=-
       - ERROR_LOG=-
     volumes:
-      - .data/CTFd/logs:/var/log/CTFd
-      - .data/CTFd/uploads:/var/uploads
-      - .:/opt/CTFd:ro
+      - .data/KMActf/logs:/var/log/KMActf
+      - .data/KMActf/uploads:/var/uploads
+      - .:/opt/KMActf:ro
     depends_on:
       - db
     networks:

@@ -7,8 +7,8 @@ import random
 import sys
 import argparse
 
-from CTFd import create_app
-from CTFd.models import (
+from KMActf import create_app
+from KMActf.models import (
     Users,
     Teams,
     Challenges,

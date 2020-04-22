@@ -4,10 +4,10 @@
 from freezegun import freeze_time
 from mock import patch
 
-from CTFd.models import Users, db
-from CTFd.utils import get_config, set_config
-from CTFd.utils.crypto import verify_password
-from CTFd.utils.security.signing import serialize
+from KMActf.models import Users, db
+from KMActf.utils import get_config, set_config
+from KMActf.utils.crypto import verify_password
+from KMActf.utils.security.signing import serialize
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
@@ -285,7 +285,7 @@ def test_user_can_confirm_email(mock_smtp):
     """Test that a user is capable of confirming their email address"""
     app = create_ctfd()
     with app.app_context(), freeze_time("2012-01-14 03:21:34"):
-        # Set CTFd to only allow confirmed users and send emails
+        # Set KMActf to only allow confirmed users and send emails
         set_config("verify_emails", True)
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
@@ -336,7 +336,7 @@ def test_user_can_reset_password(mock_smtp):
 
     app = create_ctfd()
     with app.app_context(), freeze_time("2012-01-14 03:21:34"):
-        # Set CTFd to send emails
+        # Set KMActf to send emails
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
         set_config("mail_useauth", True)

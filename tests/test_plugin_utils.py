@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.plugins import (
+from KMActf.plugins import (
     bypass_csrf_protection,
     get_admin_plugin_menu_bar,
     get_user_page_menu_bar,

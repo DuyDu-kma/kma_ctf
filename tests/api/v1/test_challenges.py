@@ -3,8 +3,8 @@
 
 from freezegun import freeze_time
 
-from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Users
-from CTFd.utils import set_config
+from KMActf.models import Challenges, Flags, Hints, Solves, Tags, Users
+from KMActf.utils import set_config
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

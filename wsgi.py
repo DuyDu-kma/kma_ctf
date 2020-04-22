@@ -6,7 +6,7 @@ if not os.getenv("FLASK_RUN_FROM_CLI"):
 
     monkey.patch_all()
 
-from CTFd import create_app
+from KMActf import create_app
 
 app = create_app()
 

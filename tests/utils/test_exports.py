@@ -3,9 +3,9 @@ import json
 import os
 import zipfile
 
-from CTFd.models import Challenges, Flags, Teams, Users
-from CTFd.utils import text_type
-from CTFd.utils.exports import export_ctf, import_ctf
+from KMActf.models import Challenges, Flags, Teams, Users
+from KMActf.utils import text_type
+from KMActf.utils.exports import export_ctf, import_ctf
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -20,7 +20,7 @@ from tests.helpers import (
 
 
 def test_export_ctf():
-    """Test that CTFd can export the database"""
+    """Test that KMActf can export the database"""
     app = create_ctfd()
     if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
         with app.app_context():
@@ -53,7 +53,7 @@ def test_export_ctf():
 
 
 def test_import_ctf():
-    """Test that CTFd can import a CTF"""
+    """Test that KMActf can import a CTF"""
     app = create_ctfd()
     if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
         with app.app_context():

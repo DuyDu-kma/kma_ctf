@@ -1,7 +1,7 @@
 {
   "name": "kma_ctf",
   "version": "1.0.0",
-  "description": "CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.",
+  "description": "KMActf is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -10,7 +10,7 @@
     "dev": "node_modules/webpack-cli/bin/cli.js -w --mode=development",
     "build": "node_modules/webpack-cli/bin/cli.js --mode=development; node_modules/webpack-cli/bin/cli.js --mode=production",
     "verify": "node_modules/webpack-cli/bin/cli.js --mode=development --display=errors-only; node_modules/webpack-cli/bin/cli.js --mode=production --display=errors-only; git diff --quiet --exit-code",
-    "clean": "rm -rf CTFd/themes/core/static/css/* CTFd/themes/core/static/js/* CTFd/themes/admin/static/css/* CTFd/themes/admin/static/js/*"
+    "clean": "rm -rf KMActf/themes/core/static/css/* KMActf/themes/core/static/js/* KMActf/themes/admin/static/css/* KMActf/themes/admin/static/js/*"
   },
   "license": "Apache-2.0",
   "devDependencies": {

@@ -13,10 +13,10 @@ from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
 
-from CTFd import create_app
-from CTFd.cache import cache, clear_standings
-from CTFd.config import TestingConfig
-from CTFd.models import (
+from KMActf import create_app
+from KMActf.cache import cache, clear_standings
+from KMActf.config import TestingConfig
+from KMActf.models import (
     Awards,
     ChallengeFiles,
     Challenges,
@@ -47,7 +47,7 @@ else:
 FakeRequest = namedtuple("FakeRequest", ["form"])
 
 
-class CTFdTestClient(FlaskClient):
+class KMActfTestClient(FlaskClient):
     def open(self, *args, **kwargs):
         if kwargs.get("json") is not None:
             with self.session_transaction() as sess:
@@ -57,11 +57,11 @@ class CTFdTestClient(FlaskClient):
                     headers = Headers(headers)
                 headers.extend(api_key_headers)
                 kwargs["headers"] = headers
-        return super(CTFdTestClient, self).open(*args, **kwargs)
+        return super(KMActfTestClient, self).open(*args, **kwargs)
 
 
 def create_ctfd(
-    ctf_name="CTFd",
+    ctf_name="KMActf",
     ctf_description="CTF description",
     name="admin",
     email="admin@ctfd.io",
@@ -84,7 +84,7 @@ def create_ctfd(
     config.SQLALCHEMY_DATABASE_URI = str(url)
 
     app = create_app(config)
-    app.test_client_class = CTFdTestClient
+    app.test_client_class = KMActfTestClient
 
     if setup:
         app = setup_ctfd(
@@ -101,7 +101,7 @@ def create_ctfd(
 
 def setup_ctfd(
     app,
-    ctf_name="CTFd",
+    ctf_name="KMActf",
     ctf_description="CTF description",
     name="admin",
     email="admin@ctfd.io",

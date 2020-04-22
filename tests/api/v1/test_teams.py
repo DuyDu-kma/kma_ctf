@@ -3,9 +3,9 @@
 
 from freezegun import freeze_time
 
-from CTFd.models import Awards, Fails, Solves, Teams, Users
-from CTFd.utils import set_config
-from CTFd.utils.crypto import verify_password
+from KMActf.models import Awards, Fails, Solves, Teams, Users
+from KMActf.utils import set_config
+from KMActf.utils.crypto import verify_password
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

@@ -9,7 +9,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.sql import column, table
 
-from CTFd.models import db
+from KMActf.models import db
 
 # revision identifiers, used by Alembic.
 revision = "b5551cd26764"

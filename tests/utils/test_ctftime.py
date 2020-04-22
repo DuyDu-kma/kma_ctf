@@ -1,8 +1,8 @@
 from freezegun import freeze_time
 
-from CTFd.models import Solves
-from CTFd.utils import set_config
-from CTFd.utils.dates import ctf_ended, ctf_started
+from KMActf.models import Solves
+from KMActf.utils import set_config
+from KMActf.utils.dates import ctf_ended, ctf_started
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

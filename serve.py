@@ -1,5 +1,5 @@
 import os
-from CTFd import create_app
+from KMActf import create_app
 # import argparse
 
 # parser = argparse.ArgumentParser()

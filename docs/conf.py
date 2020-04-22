@@ -19,8 +19,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u"CTFd"
-copyright = u"2019, CTFd LLC"
+project = u"KMActf"
+copyright = u"2019, KMActf LLC"
 author = u"Kevin Chung"
 
 # The short X.Y version
@@ -105,7 +105,7 @@ html_static_path = ["_static"]
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "CTFddoc"
+htmlhelp_basename = "KMActfdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -129,7 +129,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "CTFd.tex", u"CTFd Documentation", u"Kevin Chung", "manual")
+    (master_doc, "KMActf.tex", u"KMActf Documentation", u"Kevin Chung", "manual")
 ]
 
 
@@ -137,7 +137,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "ctfd", u"CTFd Documentation", [author], 1)]
+man_pages = [(master_doc, "ctfd", u"KMActf Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -148,10 +148,10 @@ man_pages = [(master_doc, "ctfd", u"CTFd Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "CTFd",
-        u"CTFd Documentation",
+        "KMActf",
+        u"KMActf Documentation",
         author,
-        "CTFd",
+        "KMActf",
         "A Capture The Flag framework focusing on ease of use and customizability.",
         "Miscellaneous",
     )

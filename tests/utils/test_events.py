@@ -6,8 +6,8 @@ from mock import patch
 from redis.exceptions import ConnectionError
 from six.moves.queue import Queue
 
-from CTFd.config import TestingConfig
-from CTFd.utils.events import EventManager, RedisEventManager, ServerSentEvent
+from KMActf.config import TestingConfig
+from KMActf.utils.events import EventManager, RedisEventManager, ServerSentEvent
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 

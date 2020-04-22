@@ -1,6 +1,6 @@
 import random
 
-from CTFd.models import Challenges, Fails, Solves, Teams, Tracking, Users
+from KMActf.models import Challenges, Fails, Solves, Teams, Tracking, Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

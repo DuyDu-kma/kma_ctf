@@ -2,9 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from CTFd import create_app
-from CTFd.utils import get_config as get_config_util, set_config as set_config_util
-from CTFd.models import *
+from KMActf import create_app
+from KMActf.utils import get_config as get_config_util, set_config as set_config_util
+from KMActf.models import *
 
 app = create_app()
 

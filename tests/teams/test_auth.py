@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users, db
+from KMActf.models import Users, db
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,

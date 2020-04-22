@@ -5,7 +5,7 @@ from tests.helpers import create_ctfd, destroy_ctfd, gen_user
 
 
 def test_ctfd_setup_redirect():
-    """Test that a fresh CTFd instance redirects to /setup"""
+    """Test that a fresh KMActf instance redirects to /setup"""
     app = create_ctfd(setup=False)
     with app.app_context():
         with app.test_client() as client:
@@ -29,7 +29,7 @@ def test_ctfd_setup_verification():
 
             with client.session_transaction() as sess:
                 data = {
-                    "ctf_name": "CTFd",
+                    "ctf_name": "KMActf",
                     "ctf_description": "CTF description",
                     "name": "test",
                     "email": "test@ctfd.io",

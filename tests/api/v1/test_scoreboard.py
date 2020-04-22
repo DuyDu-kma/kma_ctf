@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.cache import clear_standings
+from KMActf.cache import clear_standings
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
