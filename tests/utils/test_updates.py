@@ -3,12 +3,12 @@ from mock import Mock, patch
 
 from KMActf.utils import get_config, set_config
 from KMActf.utils.updates import update_check
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user
 
 
 def test_update_check_is_called():
     """Update checks happen on start"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         assert get_config("version_latest") is None
 
@@ -16,7 +16,7 @@ def test_update_check_is_called():
 @patch.object(requests, "post")
 def test_update_check_identifies_update(fake_get_request):
     """Update checks properly identify new versions"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["UPDATE_CHECK"] = True
         fake_response = Mock()
@@ -39,12 +39,12 @@ def test_update_check_identifies_update(fake_get_request):
             == "https://github.com/KMActf/KMActf/releases/tag/9.9.9"
         )
         assert get_config("next_update_check") == 1542212248
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_update_check_notifies_user():
     """If an update is available, admin users are notified in the panel"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["UPDATE_CHECK"] = True
         set_config("version_latest", "https://github.com/KMActf/KMActf/releases/tag/9.9.9")
@@ -56,13 +56,13 @@ def test_update_check_notifies_user():
         response = r.get_data(as_text=True)
         assert "https://github.com/KMActf/KMActf/releases/tag/9.9.9" in response
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch.object(requests, "post")
 def test_update_check_ignores_downgrades(fake_post_request):
     """Update checks do nothing on old or same versions"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["UPDATE_CHECK"] = True
         fake_response = Mock()
@@ -100,4 +100,4 @@ def test_update_check_ignores_downgrades(fake_post_request):
         }
         update_check()
         assert get_config("version_latest") is None
-    destroy_ctfd(app)
+    destroy_kmactf(app)

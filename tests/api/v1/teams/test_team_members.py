@@ -3,8 +3,8 @@
 
 from KMActf.models import Awards, Solves, Submissions, Unlocks, Users
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_team,
     gen_user,
     login_as_user,
@@ -14,7 +14,7 @@ from tests.helpers import (
 
 def test_api_team_get_members():
     """Can a user get /api/v1/teams/<team_id>/members only if admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         gen_team(app.db)
         app.db.session.commit()
@@ -31,12 +31,12 @@ def test_api_team_get_members():
             resp = r.get_json()
             # The following data is sorted b/c in Postgres data isn't necessarily returned ordered.
             assert sorted(resp["data"]) == sorted([2, 3, 4, 5])
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_remove_members():
     """Can a user remove /api/v1/teams/<team_id>/members only if admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         team = gen_team(app.db)
         assert len(team.members) == 4
@@ -60,12 +60,12 @@ def test_api_team_remove_members():
             resp = r.get_json()
             assert "User is not part of this team" in resp["errors"]["id"]
             assert r.status_code == 400
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_removing_members_deletes_information():
     """If an admin removes a user, their score information should also be removed"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         team = gen_team(app.db)
         assert len(team.members) == 4
@@ -87,15 +87,15 @@ def test_api_removing_members_deletes_information():
         assert Submissions.query.filter_by(user_id=2).count() == 0
         assert Awards.query.filter_by(user_id=2).count() == 0
         assert Unlocks.query.filter_by(user_id=2).count() == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_admin_can_change_captain():
     """Can admins/captains change captains for teams"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
-        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")  # ID 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")  # ID 3
+        user1 = gen_user(app.db, name="user1", email="user1@kmactf.io")  # ID 2
+        user2 = gen_user(app.db, name="user2", email="user2@kmactf.io")  # ID 3
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -121,15 +121,15 @@ def test_api_admin_can_change_captain():
             resp = r.get_json()
             assert resp["data"]["captain_id"] == 3
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_can_change_captain_on_self_team():
     """Can admins/captains change captains for their own team"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
-        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")  # ID 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")  # ID 3
+        user1 = gen_user(app.db, name="user1", email="user1@kmactf.io")  # ID 2
+        user2 = gen_user(app.db, name="user2", email="user2@kmactf.io")  # ID 3
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -149,4 +149,4 @@ def test_api_users_can_change_captain_on_self_team():
             resp = r.get_json()
             assert resp["data"]["captain_id"] == 3
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)

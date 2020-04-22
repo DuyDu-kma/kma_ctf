@@ -6,12 +6,12 @@ from jinja2.sandbox import SecurityError
 from werkzeug.test import Client
 
 from KMActf.utils import get_config
-from tests.helpers import create_ctfd, destroy_ctfd, gen_user, login_as_user
+from tests.helpers import create_kmactf, destroy_kmactf, gen_user, login_as_user
 
 
 def test_themes_run_in_sandbox():
     """Does get_config and set_config work properly"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         try:
             app.jinja_env.from_string(
@@ -21,24 +21,24 @@ def test_themes_run_in_sandbox():
             pass
         except Exception as e:
             raise e
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_themes_cant_access_configpy_attributes():
     """Themes should not be able to access config.py attributes"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         assert app.config["SECRET_KEY"] == "AAAAAAAAAAAAAAAAAAAA"
         assert (
             app.jinja_env.from_string("{{ get_config('SECRET_KEY') }}").render()
             != app.config["SECRET_KEY"]
         )
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_themes_escape_html():
     """Themes should escape XSS properly"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         user = gen_user(app.db, name="<script>alert(1)</script>")
         user.affiliation = "<script>alert(1)</script>"
@@ -49,12 +49,12 @@ def test_themes_escape_html():
             r = client.get("/users")
             assert r.status_code == 200
             assert "<script>alert(1)</script>" not in r.get_data(as_text=True)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_theme_header():
     """Config should be able to properly set CSS in theme header"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
 
         with login_as_user(app, "admin") as admin:
@@ -70,16 +70,16 @@ def test_theme_header():
             r = admin.patch("/api/v1/configs", json={"theme_header": css_value2})
             r = admin.get("/")
             assert css_value2 in r.get_data(as_text=True)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
-def test_that_ctfd_can_be_deployed_in_subdir():
+def test_that_kmactf_can_be_deployed_in_subdir():
     """Test that KMActf can be deployed in a subdirectory"""
     # This test is quite complicated. I do not suggest modifying it haphazardly.
     # Flask is automatically inserting the APPLICATION_ROOT into the
     # test urls which means when we hit /setup we hit /ctf/setup.
     # You can use the raw Werkzeug client to bypass this as we do below.
-    app = create_ctfd(setup=False, application_root="/ctf")
+    app = create_kmactf(setup=False, application_root="/ctf")
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/")
@@ -92,7 +92,7 @@ def test_that_ctfd_can_be_deployed_in_subdir():
                     "ctf_name": "KMActf",
                     "ctf_description": "CTF description",
                     "name": "admin",
-                    "email": "admin@ctfd.io",
+                    "email": "admin@kmactf.io",
                     "password": "password",
                     "user_mode": "users",
                     "nonce": sess.get("nonce"),
@@ -114,21 +114,21 @@ def test_that_ctfd_can_be_deployed_in_subdir():
             r = client.get("/scoreboard")
             assert r.status_code == 200
             assert "Scoreboard" in r.get_data(as_text=True)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_that_request_path_hijacking_works_properly():
     """Test that the KMActfRequest subclass correctly mimics the Flask Request when it should"""
-    app = create_ctfd(setup=False, application_root="/ctf")
+    app = create_kmactf(setup=False, application_root="/ctf")
     assert app.request_class.__name__ == "KMActfRequest"
     with app.app_context():
         # Despite loading /challenges request.path should actually be /ctf/challenges because we are
         # preprending script_root and the test context already accounts for the application_root
         with app.test_request_context("/challenges"):
             assert request.path == "/ctf/challenges"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
-    app = create_ctfd()
+    app = create_kmactf()
     assert app.request_class.__name__ == "KMActfRequest"
     with app.app_context():
         # Under normal circumstances we should be an exact clone of BaseRequest
@@ -141,4 +141,4 @@ def test_that_request_path_hijacking_works_properly():
         assert test_app.request_class.__name__ == "Request"
         with test_app.test_request_context("/challenges"):
             assert request.path == "/challenges"
-    destroy_ctfd(app)
+    destroy_kmactf(app)

@@ -3,8 +3,8 @@
 
 from KMActf.utils.scores import get_standings
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     gen_team,
@@ -15,7 +15,7 @@ from tests.helpers import (
 
 def test_scoreboard_team_score():
     """Is a user's submitted flag reflected on the team's score on /scoreboard"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db, name="user")
         team = gen_team(app.db)
@@ -30,4 +30,4 @@ def test_scoreboard_team_score():
         standings = get_standings()
         assert standings[0][2] == "team_name"
         assert standings[0][3] == 100
-    destroy_ctfd(app)
+    destroy_kmactf(app)

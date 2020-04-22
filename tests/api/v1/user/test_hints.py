@@ -5,8 +5,8 @@ from freezegun import freeze_time
 
 from KMActf.utils import set_config
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     gen_challenge,
     gen_hint,
@@ -17,18 +17,18 @@ from tests.helpers import (
 
 def test_api_hint_404():
     """Can the users 404 /api/v1/hints/<hint_id> if logged in/out"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         r = client.get("/api/v1/hints/1")
         assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hint_visibility():
     """Can the users load /api/v1/hints/<hint_id> if logged in/out"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id)
@@ -39,12 +39,12 @@ def test_api_hint_visibility():
         client = login_as_user(app)
         r = client.get("/api/v1/hints/1")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hint_visibility_ctftime():
     """Can the users load /api/v1/hints/<hint_id> if not ctftime"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -58,12 +58,12 @@ def test_api_hint_visibility_ctftime():
         client = login_as_user(app)
         r = client.get("/api/v1/hints/1")
         assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hint_locked():
     """Can the users unlock /api/v1/hints/<hint_id> if they don't have enough points"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
@@ -73,12 +73,12 @@ def test_api_hint_locked():
         assert r.status_code == 200
         r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
         assert r.status_code == 400
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hint_unlocked():
     """Can the users unlock /api/v1/hints/<hint_id> if they have enough points"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
@@ -92,12 +92,12 @@ def test_api_hint_unlocked():
         assert r.status_code == 200
         r = client.get("/api/v1/hints/1")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hints_admin_access():
     """Can the users access /api/v1/hints if not admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -105,12 +105,12 @@ def test_api_hints_admin_access():
         assert r.status_code == 302
         r = client.post("/api/v1/hints", json="")
         assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hint_admin_access():
     """Can the users patch/delete /api/v1/hint/<hint_id> if not admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
@@ -125,4 +125,4 @@ def test_api_hint_admin_access():
         assert r_admin.status_code == 200
         r_admin = admin.delete("/api/v1/hints/1", json="")
         assert r_admin.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)

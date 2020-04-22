@@ -5,7 +5,7 @@ from moto import mock_s3
 from six import BytesIO
 
 from KMActf.utils.uploads import S3Uploader, rmdir
-from tests.helpers import create_ctfd, destroy_ctfd
+from tests.helpers import create_kmactf, destroy_kmactf
 
 
 @mock_s3
@@ -13,7 +13,7 @@ def test_s3_uploader():
     conn = boto3.resource("s3", region_name="us-east-1")
     conn.create_bucket(Bucket="bucket")
 
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["UPLOAD_PROVIDER"] = "s3"
         app.config["AWS_ACCESS_KEY_ID"] = "AKIAIOSFODNN7EXAMPLE"
@@ -29,7 +29,7 @@ def test_s3_uploader():
         path = uploader.upload(fake_file, "fake_file.txt")
 
         assert "fake_file.txt" in uploader.download(path).location
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @mock_s3
@@ -37,7 +37,7 @@ def test_s3_sync():
     conn = boto3.resource("s3", region_name="us-east-1")
     conn.create_bucket(Bucket="bucket")
 
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["UPLOAD_PROVIDER"] = "s3"
         app.config["AWS_ACCESS_KEY_ID"] = "AKIAIOSFODNN7EXAMPLE"
@@ -57,4 +57,4 @@ def test_s3_sync():
                 assert f.read() == "fakedfile"
         finally:
             rmdir(os.path.dirname(full_path))
-    destroy_ctfd(app)
+    destroy_kmactf(app)

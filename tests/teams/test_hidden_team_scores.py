@@ -1,8 +1,8 @@
 from KMActf.models import Teams
 from KMActf.utils.scores import get_standings, get_team_standings
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     gen_team,
@@ -12,14 +12,14 @@ from tests.helpers import (
 
 
 def setup_app(app):
-    user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
-    team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
+    user1 = gen_user(app.db, name="user1", email="user1@kmactf.io")
+    team1 = gen_team(app.db, name="team1", email="team1@kmactf.io")
     user1.team_id = team1.id
     team1.members.append(user1)
     team1.hidden = True
 
-    user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
-    team2 = gen_team(app.db, name="team2", email="team2@ctfd.io")
+    user2 = gen_user(app.db, name="user2", email="user2@kmactf.io")
+    team2 = gen_team(app.db, name="team2", email="team2@kmactf.io")
     user2.team_id = team2.id
     team2.members.append(user2)
 
@@ -38,7 +38,7 @@ def setup_app(app):
 
 
 def test_standings():
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
 
     with app.app_context():
         setup_app(app)
@@ -48,11 +48,11 @@ def test_standings():
         assert standings[0].name == "team2"
         assert standings[0].score == 100
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_team_standings():
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
 
     with app.app_context():
         setup_app(app)
@@ -66,7 +66,7 @@ def test_team_standings():
 
 
 def test_admin_standings():
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
 
     with app.app_context():
         setup_app(app)
@@ -78,7 +78,7 @@ def test_admin_standings():
 
 
 def test_admin_team_standings():
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
 
     with app.app_context():
         setup_app(app)

@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from KMActf.utils import get_config
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user
 
 
 def test_api_configs_get_non_admin():
     """Can a user get /api/v1/configs if not admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/configs")
@@ -38,68 +38,68 @@ def test_api_configs_get_non_admin():
             r = client.delete("/api/v1/configs/ctf_name", json="")
             assert r.status_code == 403
             assert get_config("ctf_name") == "KMActf"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_configs_get_admin():
     """Can a user get /api/v1/configs if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
             r = admin.get("/api/v1/configs")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_configs_post_admin():
     """Can a user post /api/v1/configs if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
             r = admin.post("/api/v1/configs", json={"value": "9.9.9", "key": "test"})
             assert r.status_code == 200
             assert get_config("test") == "9.9.9"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_configs_patch_admin():
     """Can a user patch /api/v1/configs if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
             r = admin.patch("/api/v1/configs", json={"ctf_name": "Changed_Name"})
             assert r.status_code == 200
             assert get_config("ctf_name") == "Changed_Name"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_config_get_admin():
     """Can a user get /api/v1/configs/<config_key> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
             r = admin.get("/api/v1/configs/ctf_name")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_config_patch_admin():
     """Can a user patch /api/v1/configs/<config_key> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
             r = admin.patch("/api/v1/configs/ctf_name", json={"value": "Changed_Name"})
             assert r.status_code == 200
             assert get_config("ctf_name") == "Changed_Name"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_config_delete_admin():
     """Can a user delete /api/v1/configs/<config_key> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
             r = admin.delete("/api/v1/configs/ctf_name", json="")
             assert r.status_code == 200
             assert get_config("ctf_name") is None
-    destroy_ctfd(app)
+    destroy_kmactf(app)

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_tracking,
     gen_user,
     login_as_user,
@@ -12,18 +12,18 @@ from tests.helpers import (
 
 def test_admin_user_ip_search():
     """Can an admin search user IPs"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        u1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
+        u1 = gen_user(app.db, name="user1", email="user1@kmactf.io")
         gen_tracking(app.db, user_id=u1.id, ip="1.1.1.1")
 
-        u2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        u2 = gen_user(app.db, name="user2", email="user2@kmactf.io")
         gen_tracking(app.db, user_id=u2.id, ip="2.2.2.2")
 
-        u3 = gen_user(app.db, name="user3", email="user3@ctfd.io")
+        u3 = gen_user(app.db, name="user3", email="user3@kmactf.io")
         gen_tracking(app.db, user_id=u3.id, ip="3.3.3.3")
 
-        u4 = gen_user(app.db, name="user4", email="user4@ctfd.io")
+        u4 = gen_user(app.db, name="user4", email="user4@kmactf.io")
         gen_tracking(app.db, user_id=u4.id, ip="3.3.3.3")
         gen_tracking(app.db, user_id=u4.id, ip="4.4.4.4")
 
@@ -46,4 +46,4 @@ def test_admin_user_ip_search():
             assert "user2" not in resp
             assert "user3" in resp
             assert "user4" in resp
-    destroy_ctfd(app)
+    destroy_kmactf(app)

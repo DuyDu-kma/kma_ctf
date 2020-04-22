@@ -8,14 +8,14 @@ from six.moves.queue import Queue
 
 from KMActf.config import TestingConfig
 from KMActf.utils.events import EventManager, RedisEventManager, ServerSentEvent
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user, register_user
 
 
 def test_event_manager_installed():
     """Test that EventManager is installed on the Flask app"""
-    app = create_ctfd()
+    app = create_kmactf()
     assert type(app.events_manager) == EventManager
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_event_manager_subscription():
@@ -66,7 +66,7 @@ def test_event_manager_publish():
 
 def test_event_endpoint_is_event_stream():
     """Test that the /events endpoint is text/event-stream"""
-    app = create_ctfd()
+    app = create_kmactf()
     with patch.object(Queue, "get") as fake_queue:
         saved_data = {
             "user_id": None,
@@ -86,7 +86,7 @@ def test_event_endpoint_is_event_stream():
             with login_as_user(app) as client:
                 r = client.get("/events")
                 assert "text/event-stream" in r.headers["Content-Type"]
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_redis_event_manager_installed():
@@ -98,13 +98,13 @@ def test_redis_event_manager_installed():
         CACHE_TYPE = "redis"
 
     try:
-        app = create_ctfd(config=RedisConfig)
+        app = create_kmactf(config=RedisConfig)
     except ConnectionError:
         print("Failed to connect to redis. Skipping test.")
     else:
         with app.app_context():
             assert isinstance(app.events_manager, RedisEventManager)
-        destroy_ctfd(app)
+        destroy_kmactf(app)
 
 
 def test_redis_event_manager_subscription():
@@ -116,7 +116,7 @@ def test_redis_event_manager_subscription():
         CACHE_TYPE = "redis"
 
     try:
-        app = create_ctfd(config=RedisConfig)
+        app = create_kmactf(config=RedisConfig)
     except ConnectionError:
         print("Failed to connect to redis. Skipping test.")
     else:
@@ -149,7 +149,7 @@ def test_redis_event_manager_subscription():
                     assert message.to_dict() == saved_data
                     assert message.__str__().startswith("event:notification\ndata:")
                     break
-        destroy_ctfd(app)
+        destroy_kmactf(app)
 
 
 def test_redis_event_manager_publish():
@@ -161,7 +161,7 @@ def test_redis_event_manager_publish():
         CACHE_TYPE = "redis"
 
     try:
-        app = create_ctfd(config=RedisConfig)
+        app = create_kmactf(config=RedisConfig)
     except ConnectionError:
         print("Failed to connect to redis. Skipping test.")
     else:
@@ -179,4 +179,4 @@ def test_redis_event_manager_publish():
 
             event_manager = RedisEventManager()
             event_manager.publish(data=saved_data, type="notification", channel="ctf")
-        destroy_ctfd(app)
+        destroy_kmactf(app)

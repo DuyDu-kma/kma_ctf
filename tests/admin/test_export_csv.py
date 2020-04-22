@@ -1,9 +1,9 @@
-from tests.helpers import create_ctfd, destroy_ctfd, gen_challenge, login_as_user
+from tests.helpers import create_kmactf, destroy_kmactf, gen_challenge, login_as_user
 
 
 def test_export_csv_works():
     """Test that CSV exports work properly"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_challenge(app.db)
         client = login_as_user(app, name="admin", password="password")
@@ -13,4 +13,4 @@ def test_export_csv_works():
         )
         assert len(csv_data) > 0
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)

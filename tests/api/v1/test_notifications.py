@@ -3,8 +3,8 @@
 
 from KMActf.models import Notifications
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_notification,
     login_as_user,
@@ -13,7 +13,7 @@ from tests.helpers import (
 
 
 def test_api_notifications_get():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         gen_notification(app.db)
@@ -35,12 +35,12 @@ def test_api_notifications_get():
             """Can the users post /api/v1/notifications if not admin"""
             r = client.post("/api/v1/notifications", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_notifications_post_admin():
     """Can the users post /api/v1/notifications if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_challenge(app.db)
         with login_as_user(app, name="admin") as client:
@@ -48,12 +48,12 @@ def test_api_notifications_post_admin():
                 "/api/v1/notifications", json={"title": "title", "content": "content"}
             )
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_delete_notifications_by_admin():
     """Test that an admin can delete notifications"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_challenge(app.db)
         gen_notification(app.db)
@@ -63,12 +63,12 @@ def test_api_delete_notifications_by_admin():
             assert r.status_code == 200
             assert r.get_json()["success"] is True
         assert Notifications.query.count() == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_delete_notifications_by_user():
     """Test that a non-admin cannot delete notifications"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         gen_challenge(app.db)
@@ -78,4 +78,4 @@ def test_api_delete_notifications_by_user():
             r = client.delete("/api/v1/notifications/1", json="")
             assert r.status_code == 403
         assert Notifications.query.count() == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)

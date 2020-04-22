@@ -5,8 +5,8 @@ from freezegun import freeze_time
 
 from KMActf.utils import set_config
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_user,
     login_as_user,
@@ -16,7 +16,7 @@ from tests.helpers import (
 
 def test_api_challenge_list_visibility():
     """Can the api load /api/v1/challenges if challenge_visibility is private/public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -31,12 +31,12 @@ def test_api_challenge_list_visibility():
             set_config("challenge_visibility", "private")
             r = client.get("/api/v1/challenges")
             assert r.status_code == 302
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_list_ctftime():
     """Can the api load /api/v1/challenges if ctftime is over"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -48,12 +48,12 @@ def test_api_challenge_list_ctftime():
         with app.test_client() as client:
             r = client.get("/api/v1/challenges")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_list_user_visibility():
     """Can the user load /api/v1/challenges if challenge_visibility is private/public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -68,12 +68,12 @@ def test_api_challenge_list_user_visibility():
         set_config("challenge_visibility", "public")
         r = client.get("/api/v1/challenges")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_list_user_ctftime():
     """Can the user load /api/v1/challenges if ctftime is over"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -85,12 +85,12 @@ def test_api_challenge_list_user_ctftime():
         client = login_as_user(app)
         r = client.get("/api/v1/challenges")
         assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_list_verified_emails():
     """Can a verified email load /api/v1/challenges"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -106,19 +106,19 @@ def test_api_challenge_list_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@kmactf.io",
             password="password",
             verified=True,
         )
         registered_client = login_as_user(app, "user_name", "password")
         r = registered_client.get("/api/v1/challenges")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_visibility():
     """Can the api load /api/v1/challenges/<challenge_id> if challenge_visibility is private/public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -134,12 +134,12 @@ def test_api_challenge_visibility():
             set_config("challenge_visibility", "private")
             r = client.get("/api/v1/challenges/1")
             assert r.status_code == 302
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_ctftime():
     """Can the api load /api/v1/challenges/<challenge_id> if ctftime is over"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -152,12 +152,12 @@ def test_api_challenge_ctftime():
         with app.test_client() as client:
             r = client.get("/api/v1/challenges/1")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_user_visibility():
     """Can the user load /api/v1/challenges/<challenge_id> if challenge_visibility is private/public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -173,12 +173,12 @@ def test_api_challenge_user_visibility():
         set_config("challenge_visibility", "public")
         r = client.get("/api/v1/challenges/1")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_user_ctftime():
     """Can the user load /api/v1/challenges/<challenge_id> if ctftime is over"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -191,12 +191,12 @@ def test_api_challenge_user_ctftime():
         client = login_as_user(app)
         r = client.get("/api/v1/challenges/1")
         assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_verified_emails():
     """Can a verified email load /api/v1/challenges/<challenge_id>"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -209,7 +209,7 @@ def test_api_challenge_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@kmactf.io",
             password="password",
             verified=True,
         )
@@ -220,12 +220,12 @@ def test_api_challenge_verified_emails():
         assert r.status_code == 302
         r = registered_client.get("/api/v1/challenges/1")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_404():
     """Will a bad <challenge_id> at /api/v1/challenges/<challenge_id> 404"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -237,12 +237,12 @@ def test_api_challenge_404():
         client = login_as_user(app)
         r = client.get("/api/v1/challenges/1")
         assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_solves_visibility():
     """Can the api load /api/v1/challenges/<challenge_id>/solves if challenge_visibility is private/public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -258,12 +258,12 @@ def test_api_challenge_solves_visibility():
             set_config("challenge_visibility", "private")
             r = client.get("/api/v1/challenges/1/solves")
             assert r.status_code == 302
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_solves_ctftime():
     """Can the api load /api/v1/challenges/<challenge_id>/solves if ctftime is over"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -276,12 +276,12 @@ def test_api_challenge_solves_ctftime():
         with app.test_client() as client:
             r = client.get("/api/v1/challenges/1/solves")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_solves_user_visibility():
     """Can the user load /api/v1/challenges/<challenge_id>/solves if challenge_visibility is private/public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -297,12 +297,12 @@ def test_api_challenge_solves_user_visibility():
         set_config("challenge_visibility", "public")
         r = client.get("/api/v1/challenges/1/solves")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_solves_user_ctftime():
     """Can the user load /api/v1/challenges/<challenge_id>/solves if ctftime is over"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -315,12 +315,12 @@ def test_api_challenge_solves_user_ctftime():
         client = login_as_user(app)
         r = client.get("/api/v1/challenges/1/solves")
         assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_solves_verified_emails():
     """Can a verified email load /api/v1/challenges/<challenge_id>/solves"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -333,7 +333,7 @@ def test_api_challenge_solves_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@kmactf.io",
             password="password",
             verified=True,
         )
@@ -344,12 +344,12 @@ def test_api_challenge_solves_verified_emails():
         assert r.status_code == 302
         r = registered_client.get("/api/v1/challenges/1/solves")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenges_solves_score_visibility():
     """Can a user load /api/v1/challenges/<challenge_id>/solves if score_visibility is public/private/admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -373,12 +373,12 @@ def test_api_challenges_solves_score_visibility():
         admin = login_as_user(app, "admin", "password")
         r = admin.get("/api/v1/challenges/1/solves")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_challenge_solves_404():
     """Will a bad <challenge_id> at /api/v1/challenges/<challenge_id>/solves 404"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-5"):
         set_config(
             "start", "1507089600"
@@ -390,4 +390,4 @@ def test_api_challenge_solves_404():
         client = login_as_user(app)
         r = client.get("/api/v1/challenges/1/solves")
         assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)

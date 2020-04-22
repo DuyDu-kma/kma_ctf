@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     login_as_user,
     register_user,
@@ -12,7 +12,7 @@ from tests.helpers import (
 
 def test_api_awards_access_non_admin():
     """Can a user post /api/v1/awards if not admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.post("/api/v1/awards", json="")
@@ -28,12 +28,12 @@ def test_api_awards_access_non_admin():
             r = client.delete("/api/v1/awards/1", json="")
             assert r.status_code == 403
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_awards_post_admin():
     """Can a user post /api/v1/awards if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app, "admin") as client:
@@ -51,26 +51,26 @@ def test_api_awards_post_admin():
             assert r.get_json()["success"] is True
             r = client.post("/api/v1/awards", json="")
             assert r.status_code == 400
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_award_get_admin():
     """Can a user get /api/v1/awards/<award_id> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_award(app.db, 1)
         with login_as_user(app, "admin") as client:
             r = client.get("/api/v1/awards/1", json="")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_award_delete_admin():
     """Can a user delete /api/v1/awards/<award_id> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_award(app.db, 1)
         with login_as_user(app, "admin") as client:
             r = client.delete("/api/v1/awards/1", json="")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)

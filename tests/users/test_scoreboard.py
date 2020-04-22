@@ -5,8 +5,8 @@ from freezegun import freeze_time
 
 from KMActf.models import Users
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     gen_challenge,
     gen_flag,
@@ -18,7 +18,7 @@ from tests.helpers import (
 
 
 def test_user_get_scoreboard_components():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -37,15 +37,15 @@ def test_user_get_scoreboard_components():
         """Can a registered user load /api/v1/scoreboard/top/10"""
         r = client.get("/api/v1/scoreboard/top/10")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_score_is_correct():
     """Test that a user's score is correct"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         # create user1
-        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user1", email="user1@kmactf.io")
 
         # create challenge
         chal = gen_challenge(app.db, value=100)
@@ -61,7 +61,7 @@ def test_user_score_is_correct():
         assert user1.place == "1st"
 
         # create user2
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user2", email="user2@kmactf.io")
 
         # user2 solves the challenge
         gen_solve(app.db, 3, challenge_id=chal_id)
@@ -77,15 +77,15 @@ def test_user_score_is_correct():
         # assert that user2's score is now 105 and is in 1st place
         assert user2.score == 105
         assert user2.place == "1st"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_top_10():
     """Make sure top10 returns correct information"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@kmactf.io")
+        register_user(app, name="user2", email="user2@kmactf.io")
         register_user(app)
 
         chal1 = gen_challenge(app.db)
@@ -150,18 +150,18 @@ def test_top_10():
             },
         }
         assert saved == response
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_scoring_logic():
     """Test that scoring logic is correct"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         admin = login_as_user(app, name="admin", password="password")
 
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user1", email="user1@kmactf.io", password="password")
         client1 = login_as_user(app, name="user1", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(app, name="user2", email="user2@kmactf.io", password="password")
         client2 = login_as_user(app, name="user2", password="password")
 
         chal1 = gen_challenge(app.db)
@@ -205,18 +205,18 @@ def test_scoring_logic():
         # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
         assert scores[0]["name"] == "user2"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_scoring_logic_with_zero_point_challenges():
     """Test that scoring logic is correct with zero point challenges. Zero point challenges should not tie break"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         admin = login_as_user(app, name="admin", password="password")
 
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user1", email="user1@kmactf.io", password="password")
         client1 = login_as_user(app, name="user1", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(app, name="user2", email="user2@kmactf.io", password="password")
         client2 = login_as_user(app, name="user2", password="password")
 
         chal1 = gen_challenge(app.db)
@@ -275,15 +275,15 @@ def test_scoring_logic_with_zero_point_challenges():
         # user2 should still be on top because 0 point challenges should not tie break
         scores = get_scores(admin)
         assert scores[0]["name"] == "user2"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_hidden_users_should_not_influence_scores():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
-        register_user(app, name="user3", email="user3@ctfd.io", password="password")
+        register_user(app, name="user1", email="user1@kmactf.io", password="password")
+        register_user(app, name="user2", email="user2@kmactf.io", password="password")
+        register_user(app, name="user3", email="user3@kmactf.io", password="password")
 
         user = Users.query.filter_by(name="user3").first()
         user.hidden = True
@@ -313,4 +313,4 @@ def test_hidden_users_should_not_influence_scores():
 
         user2 = Users.query.filter_by(name="user2").first()
         assert user2.place == "2nd"
-    destroy_ctfd(app)
+    destroy_kmactf(app)

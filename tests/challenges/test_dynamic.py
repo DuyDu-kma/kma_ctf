@@ -5,8 +5,8 @@ from KMActf.models import Challenges
 from KMActf.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
 from tests.helpers import (
     FakeRequest,
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_flag,
     gen_user,
     login_as_user,
@@ -16,7 +16,7 @@ from tests.helpers import (
 
 def test_can_create_dynamic_challenge():
     """Test that dynamic challenges can be made from the API/admin panel"""
-    app = create_ctfd(enable_plugins=True)
+    app = create_kmactf(enable_plugins=True)
     with app.app_context():
         register_user(app)
         client = login_as_user(app, name="admin", password="password")
@@ -43,12 +43,12 @@ def test_can_create_dynamic_challenge():
         assert challenge.initial == 100
         assert challenge.decay == 20
         assert challenge.minimum == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_can_update_dynamic_challenge():
     """Test that dynamic challenges can be deleted"""
-    app = create_ctfd(enable_plugins=True)
+    app = create_kmactf(enable_plugins=True)
     with app.app_context():
         challenge_data = {
             "name": "name",
@@ -91,12 +91,12 @@ def test_can_update_dynamic_challenge():
         assert challenge.minimum == 5
         assert challenge.state == "visible"
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_can_add_requirement_dynamic_challenge():
     """Test that requirements can be added to dynamic challenges"""
-    app = create_ctfd(enable_plugins=True)
+    app = create_kmactf(enable_plugins=True)
     with app.app_context():
         challenge_data = {
             "name": "name",
@@ -146,11 +146,11 @@ def test_can_add_requirement_dynamic_challenge():
 
         assert challenge.requirements == [1]
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_can_delete_dynamic_challenge():
-    app = create_ctfd(enable_plugins=True)
+    app = create_kmactf(enable_plugins=True)
     with app.app_context():
         register_user(app)
         client = login_as_user(app, name="admin", password="password")
@@ -177,11 +177,11 @@ def test_can_delete_dynamic_challenge():
 
         challenges = DynamicChallenge.query.all()
         assert len(challenges) == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_dynamic_challenge_loses_value_properly():
-    app = create_ctfd(enable_plugins=True)
+    app = create_kmactf(enable_plugins=True)
     with app.app_context():
         register_user(app)
         client = login_as_user(app, name="admin", password="password")
@@ -204,7 +204,7 @@ def test_dynamic_challenge_loses_value_properly():
 
         for i, team_id in enumerate(range(2, 26)):
             name = "user{}".format(team_id)
-            email = "user{}@ctfd.io".format(team_id)
+            email = "user{}@kmactf.io".format(team_id)
             # We need to bypass rate-limiting so gen_user instead of register_user
             gen_user(app.db, name=name, email=email)
 
@@ -229,12 +229,12 @@ def test_dynamic_challenge_loses_value_properly():
                 else:
                     assert chal.initial >= chal.value
                     assert chal.value > chal.minimum
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_dynamic_challenge_doesnt_lose_value_on_update():
     """Dynamic challenge updates without changing any values or solves shouldn't change the current value. See #1043"""
-    app = create_ctfd(enable_plugins=True)
+    app = create_kmactf(enable_plugins=True)
     with app.app_context():
         challenge_data = {
             "name": "name",
@@ -260,11 +260,11 @@ def test_dynamic_challenge_doesnt_lose_value_on_update():
         prev_chal_value = chal.value
         chal = DynamicValueChallenge.update(chal, req)
         assert prev_chal_value == chal.value
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
-    app = create_ctfd(enable_plugins=True)
+    app = create_kmactf(enable_plugins=True)
     with app.app_context():
         register_user(app)
         client = login_as_user(app, name="admin", password="password")
@@ -295,7 +295,7 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
         # Make solves as hidden users. Also should not affect value
         for i, team_id in enumerate(range(2, 26)):
             name = "user{}".format(team_id)
-            email = "user{}@ctfd.io".format(team_id)
+            email = "user{}@kmactf.io".format(team_id)
             # We need to bypass rate-limiting so gen_user instead of register_user
             user = gen_user(app.db, name=name, email=email)
             user.hidden = True
@@ -318,4 +318,4 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
 
                 chal = DynamicChallenge.query.filter_by(id=1).first()
                 assert chal.value == chal.initial
-    destroy_ctfd(app)
+    destroy_kmactf(app)

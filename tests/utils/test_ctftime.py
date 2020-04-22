@@ -4,8 +4,8 @@ from KMActf.models import Solves
 from KMActf.utils import set_config
 from KMActf.utils.dates import ctf_ended, ctf_started
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     login_as_user,
@@ -15,7 +15,7 @@ from tests.helpers import (
 
 def test_ctftime_prevents_accessing_challenges_before_ctf():
     """Test that the ctftime function prevents users from accessing challenges before the ctf"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config(
             "start", "1507089600"
@@ -40,12 +40,12 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
             assert r.status_code == 403
         solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_ctftime_allows_accessing_challenges_during_ctf():
     """Test that the ctftime function allows accessing challenges during the ctf"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config(
             "start", "1507089600"
@@ -73,12 +73,12 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
             assert r.status_code == 200
         solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_ctftime_prevents_accessing_challenges_after_ctf():
     """Test that the ctftime function prevents accessing challenges after the ctf"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config(
             "start", "1507089600"
@@ -106,7 +106,7 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
             assert r.status_code == 403
         solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_ctf_started():
@@ -114,7 +114,7 @@ def test_ctf_started():
     Tests that the ctf_started function returns the correct value
     :return:
     """
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         assert ctf_started() is True
 
@@ -134,14 +134,14 @@ def test_ctf_started():
 
         with freeze_time("2017-10-7"):
             assert ctf_started() is True
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_ctf_ended():
     """
     Tests that the ctf_ended function returns the correct value
     """
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         assert ctf_ended() is False
 
@@ -160,4 +160,4 @@ def test_ctf_ended():
 
         with freeze_time("2017-10-7"):
             assert ctf_ended() is True
-    destroy_ctfd(app)
+    destroy_kmactf(app)

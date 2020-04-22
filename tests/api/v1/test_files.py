@@ -6,8 +6,8 @@ from io import BytesIO
 
 from KMActf.models import ChallengeFiles, Challenges, Files
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_file,
     login_as_user,
@@ -15,7 +15,7 @@ from tests.helpers import (
 
 
 def test_api_files_get_non_admin():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db)
         gen_file(
@@ -44,22 +44,22 @@ def test_api_files_get_non_admin():
             """Can a user delete /api/v1/files/<file_id> if not admin"""
             r = client.delete("/api/v1/files/1", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_files_get_admin():
     """Can a user get /api/v1/files if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as client:
             r = client.get("/api/v1/files", json="")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_files_post_admin():
     """Can a user post /api/v1/files if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, name="admin") as client:
             with client.session_transaction() as sess:
@@ -74,12 +74,12 @@ def test_api_files_post_admin():
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()
             os.remove(os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location))
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_file_get_admin():
     """Can a user get /api/v1/files/<file_id> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db)
         f = gen_file(
@@ -93,12 +93,12 @@ def test_api_file_get_admin():
         with login_as_user(app, "admin") as client:
             r = client.get("/api/v1/files/1", json="")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_file_delete_admin():
     """Can a user delete /api/v1/files/<file_id> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db)
         f = gen_file(
@@ -116,4 +116,4 @@ def test_api_file_delete_admin():
             assert ChallengeFiles.query.count() == 0
             chal = Challenges.query.filter_by(id=1).first()
             assert f not in chal.files
-    destroy_ctfd(app)
+    destroy_kmactf(app)

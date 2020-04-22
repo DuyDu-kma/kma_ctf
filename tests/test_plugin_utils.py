@@ -14,27 +14,27 @@ from KMActf.plugins import (
     register_plugin_script,
     register_user_page_menu_bar,
 )
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, setup_ctfd
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user, setup_kmactf
 
 
 def test_register_plugin_asset():
     """Test that plugin asset registration works"""
-    app = create_ctfd(setup=False)
+    app = create_kmactf(setup=False)
     register_plugin_asset(app, asset_path="/plugins/__init__.py")
-    app = setup_ctfd(app)
+    app = setup_kmactf(app)
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/plugins/__init__.py")
             assert len(r.get_data(as_text=True)) > 0
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_register_plugin_assets_directory():
     """Test that plugin asset directory registration works"""
-    app = create_ctfd(setup=False)
+    app = create_kmactf(setup=False)
     register_plugin_assets_directory(app, base_path="/plugins/")
-    app = setup_ctfd(app)
+    app = setup_kmactf(app)
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/plugins/__init__.py")
@@ -43,12 +43,12 @@ def test_register_plugin_assets_directory():
             r = client.get("/plugins/challenges/__init__.py")
             assert len(r.get_data(as_text=True)) > 0
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_override_template():
     """Does override_template work properly for regular themes when used from a plugin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         override_template("login.html", "LOGIN OVERRIDE")
         with app.test_client() as client:
@@ -56,12 +56,12 @@ def test_override_template():
             assert r.status_code == 200
             output = r.get_data(as_text=True)
             assert "LOGIN OVERRIDE" in output
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_admin_override_template():
     """Does override_template work properly for the admin panel when used from a plugin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         override_template("admin/users/user.html", "ADMIN USER OVERRIDE")
 
@@ -70,63 +70,63 @@ def test_admin_override_template():
         assert r.status_code == 200
         output = r.get_data(as_text=True)
         assert "ADMIN USER OVERRIDE" in output
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_register_plugin_script():
     """Test that register_plugin_script adds script paths to the core theme when used from a plugin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_plugin_script("/fake/script/path.js")
-        register_plugin_script("http://ctfd.io/fake/script/path.js")
+        register_plugin_script("http://kmactf.io/fake/script/path.js")
         with app.test_client() as client:
             r = client.get("/")
             output = r.get_data(as_text=True)
             assert "/fake/script/path.js" in output
-            assert "http://ctfd.io/fake/script/path.js" in output
-    destroy_ctfd(app)
+            assert "http://kmactf.io/fake/script/path.js" in output
+    destroy_kmactf(app)
 
 
 def test_register_plugin_stylesheet():
     """Test that register_plugin_stylesheet adds stylesheet paths to the core theme when used from a plugin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_plugin_script("/fake/stylesheet/path.css")
-        register_plugin_script("http://ctfd.io/fake/stylesheet/path.css")
+        register_plugin_script("http://kmactf.io/fake/stylesheet/path.css")
         with app.test_client() as client:
             r = client.get("/")
             output = r.get_data(as_text=True)
             assert "/fake/stylesheet/path.css" in output
-            assert "http://ctfd.io/fake/stylesheet/path.css" in output
-    destroy_ctfd(app)
+            assert "http://kmactf.io/fake/stylesheet/path.css" in output
+    destroy_kmactf(app)
 
 
 def test_register_admin_plugin_script():
     """Test that register_admin_plugin_script adds script paths to the admin theme when used from a plugin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_admin_plugin_script("/fake/script/path.js")
-        register_admin_plugin_script("http://ctfd.io/fake/script/path.js")
+        register_admin_plugin_script("http://kmactf.io/fake/script/path.js")
         with login_as_user(app, name="admin") as client:
             r = client.get("/admin/statistics")
             output = r.get_data(as_text=True)
             assert "/fake/script/path.js" in output
-            assert "http://ctfd.io/fake/script/path.js" in output
-    destroy_ctfd(app)
+            assert "http://kmactf.io/fake/script/path.js" in output
+    destroy_kmactf(app)
 
 
 def test_register_admin_plugin_stylesheet():
     """Test that register_admin_plugin_stylesheet adds stylesheet paths to the admin theme when used from a plugin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_admin_plugin_stylesheet("/fake/stylesheet/path.css")
-        register_admin_plugin_stylesheet("http://ctfd.io/fake/stylesheet/path.css")
+        register_admin_plugin_stylesheet("http://kmactf.io/fake/stylesheet/path.css")
         with login_as_user(app, name="admin") as client:
             r = client.get("/admin/statistics")
             output = r.get_data(as_text=True)
             assert "/fake/stylesheet/path.css" in output
-            assert "http://ctfd.io/fake/stylesheet/path.css" in output
-    destroy_ctfd(app)
+            assert "http://kmactf.io/fake/stylesheet/path.css" in output
+    destroy_kmactf(app)
 
 
 def test_register_admin_plugin_menu_bar():
@@ -134,7 +134,7 @@ def test_register_admin_plugin_menu_bar():
     Test that register_admin_plugin_menu_bar() properly inserts into HTML and get_admin_plugin_menu_bar()
     returns the proper list.
     """
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_admin_plugin_menu_bar(
             title="test_admin_plugin_name", route="/test_plugin"
@@ -149,7 +149,7 @@ def test_register_admin_plugin_menu_bar():
         menu_item = get_admin_plugin_menu_bar()[0]
         assert menu_item.title == "test_admin_plugin_name"
         assert menu_item.route == "/test_plugin"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_register_user_page_menu_bar():
@@ -157,7 +157,7 @@ def test_register_user_page_menu_bar():
     Test that the register_user_page_menu_bar() properly inserts into HTML and get_user_page_menu_bar() returns the
     proper list.
     """
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user_page_menu_bar(
             title="test_user_menu_link", route="/test_user_href"
@@ -173,14 +173,14 @@ def test_register_user_page_menu_bar():
         menu_item = get_user_page_menu_bar()[0]
         assert menu_item.title == "test_user_menu_link"
         assert menu_item.route == "/test_user_href"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_bypass_csrf_protection():
     """
     Test that the bypass_csrf_protection decorator functions properly
     """
-    app = create_ctfd()
+    app = create_kmactf()
 
     with app.app_context():
         with app.test_client() as client:
@@ -201,4 +201,4 @@ def test_bypass_csrf_protection():
             output = r.get_data(as_text=True)
             assert r.status_code == 200
             assert output == "Success"
-    destroy_ctfd(app)
+    destroy_kmactf(app)

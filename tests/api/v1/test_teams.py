@@ -7,8 +7,8 @@ from KMActf.models import Awards, Fails, Solves, Teams, Users
 from KMActf.utils import set_config
 from KMActf.utils.crypto import verify_password
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     gen_challenge,
     gen_fail,
@@ -24,7 +24,7 @@ from tests.helpers import (
 
 def test_api_teams_get_public():
     """Can a user get /api/v1/teams if teams are public"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             set_config("account_visibility", "public")
@@ -36,12 +36,12 @@ def test_api_teams_get_public():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/teams")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_teams_get_private():
     """Can a user get /api/v1/teams if teams are private"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
@@ -54,12 +54,12 @@ def test_api_teams_get_private():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/teams")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_teams_get_admin():
     """Can a user get /api/v1/teams if teams are viewed by admins only"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with login_as_user(app, "admin") as client:
             set_config("account_visibility", "public")
@@ -71,22 +71,22 @@ def test_api_teams_get_admin():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/teams")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_teams_post_non_admin():
     """Can a user post /api/v1/teams if not admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             r = client.post("/api/v1/teams", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_teams_post_admin():
     """Can a user post /api/v1/teams if admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with login_as_user(app, "admin") as client:
             # Create team
@@ -121,12 +121,12 @@ def test_api_teams_post_admin():
             r = client.post("/teams/join", data=data)
             user = Users.query.filter_by(id=2).first()
             assert user.team_id == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_teams_post_admin_duplicate():
     """Test that admins can only create teams with unique information"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         gen_team(app.db, name="team1")
         with login_as_user(app, "admin") as client:
@@ -134,10 +134,10 @@ def test_api_teams_post_admin_duplicate():
             r = client.post(
                 "/api/v1/teams",
                 json={
-                    "website": "https://ctfd.io",
+                    "website": "https://kmactf.io",
                     "name": "team1",
                     "country": "TW",
-                    "email": "team1@ctfd.io",
+                    "email": "team1@kmactf.io",
                     "affiliation": "team",
                     "password": "password",
                 },
@@ -152,10 +152,10 @@ def test_api_teams_post_admin_duplicate():
             r = client.post(
                 "/api/v1/teams",
                 json={
-                    "website": "https://ctfd.io",
+                    "website": "https://kmactf.io",
                     "name": "new_team",
                     "country": "TW",
-                    "email": "team@ctfd.io",
+                    "email": "team@kmactf.io",
                     "affiliation": "team",
                     "password": "password",
                 },
@@ -165,12 +165,12 @@ def test_api_teams_post_admin_duplicate():
             assert resp["errors"]["email"]
             assert resp["success"] is False
             assert Teams.query.count() == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_public():
     """Can a user get /api/v1/team/<team_id> if teams are public"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             set_config("account_visibility", "public")
@@ -183,12 +183,12 @@ def test_api_team_get_public():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/teams/1")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_private():
     """Can a user get /api/v1/teams/<team_id> if teams are private"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
@@ -202,12 +202,12 @@ def test_api_team_get_private():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/teams/1")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_admin():
     """Can a user get /api/v1/teams/<team_id> if teams are viewed by admins only"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with login_as_user(app, "admin") as client:
             gen_team(app.db)
@@ -220,23 +220,23 @@ def test_api_team_get_admin():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/teams/1")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_patch_non_admin():
     """Can a user patch /api/v1/teams/<team_id> if not admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         gen_team(app.db)
         with app.test_client() as client:
             r = client.patch("/api/v1/teams/1", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_patch_admin():
     """Can a user patch /api/v1/teams/<team_id> if admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         gen_team(app.db)
         with login_as_user(app, "admin") as client:
@@ -244,7 +244,7 @@ def test_api_team_patch_admin():
                 "/api/v1/teams/1",
                 json={
                     "name": "team_name",
-                    "email": "team@ctfd.io",
+                    "email": "team@kmactf.io",
                     "password": "password",
                     "affiliation": "changed",
                 },
@@ -253,23 +253,23 @@ def test_api_team_patch_admin():
             assert r.status_code == 200
             assert r.get_json()["data"]["affiliation"] == "changed"
             assert verify_password("password", team.password)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_delete_non_admin():
     """Can a user delete /api/v1/teams/<team_id> if not admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         gen_team(app.db)
         with app.test_client() as client:
             r = client.delete("/api/v1/teams/1", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_delete_admin():
     """Can a user patch /api/v1/teams/<team_id> if admin"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         team = gen_team(app.db)
 
@@ -286,22 +286,22 @@ def test_api_team_delete_admin():
 
         for user in Users.query.all():
             assert user.team_id is None
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_not_logged_in():
     """Can a user get /api/v1/teams/me if not logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/teams/me")
             assert r.status_code == 302
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_logged_in():
     """Can a user get /api/v1/teams/me if logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -311,25 +311,25 @@ def test_api_team_get_me_logged_in():
         with login_as_user(app, name="user_name") as client:
             r = client.get("/api/v1/teams/me")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_patch_me_not_logged_in():
     """Can a user patch /api/v1/teams/me if not logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             r = client.patch("/api/v1/teams/me", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_patch_me_logged_in_user():
     """Can a user patch /api/v1/teams/me if logged in as a regular user"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
-        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        user1 = gen_user(app.db, name="user1", email="user1@kmactf.io")
+        user2 = gen_user(app.db, name="user2", email="user2@kmactf.io")
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -341,12 +341,12 @@ def test_api_team_patch_me_logged_in_user():
                 "/api/v1/teams/me", json={"name": "team_name", "affiliation": "changed"}
             )
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_patch_me_logged_in_captain():
     """Can a user patch /api/v1/teams/me if logged in as the captain"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -359,12 +359,12 @@ def test_api_team_patch_me_logged_in_captain():
                 "/api/v1/teams/me", json={"name": "team_name", "affiliation": "changed"}
             )
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_patch_me_logged_in_admin_captain():
     """Can an admin patch /api/v1/teams/me if logged in as a team captain"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         admin = Users.query.filter_by(id=1).first()
         user = gen_user(app.db)
@@ -393,22 +393,22 @@ def test_api_team_patch_me_logged_in_admin_captain():
 
         team = Teams.query.filter_by(id=1).first()
         assert team.name == "team_name"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_solves_not_logged_in():
     """Can a user get /api/v1/teams/me/solves if not logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/teams/me/solves", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_solves_logged_in():
     """Can a user get /api/v1/teams/me/solves if logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -418,12 +418,12 @@ def test_api_team_get_me_solves_logged_in():
         with login_as_user(app, name="user_name") as client:
             r = client.get("/api/v1/teams/me/solves")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_solves():
     """Can a user get /api/v1/teams/<team_id>/solves if logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -433,15 +433,15 @@ def test_api_team_get_solves():
         with login_as_user(app, name="user_name") as client:
             r = client.get("/api/v1/teams/1/solves")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_solves_after_freze_time():
     """Can a user get /api/v1/teams/<team_id>/solves after freeze time"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
-        team = gen_team(app.db, name="team1", email="team1@ctfd.io", member_count=1)
+        team = gen_team(app.db, name="team1", email="team1@kmactf.io", member_count=1)
 
         team_member = team.members[0]
         tm_name = team_member.name
@@ -473,22 +473,22 @@ def test_api_team_get_solves_after_freze_time():
                 r = client.get("/api/v1/teams/1/solves")
                 data = r.get_json()["data"]
                 assert len(data) == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_fails_not_logged_in():
     """Can a user get /api/v1/teams/me/fails if not logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/teams/me/fails", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_fails_logged_in():
     """Can a user get /api/v1/teams/me/fails if logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -498,12 +498,12 @@ def test_api_team_get_me_fails_logged_in():
         with login_as_user(app, name="user_name") as client:
             r = client.get("/api/v1/teams/me/fails")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_fails():
     """Can a user get /api/v1/teams/<team_id>/fails if logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -513,15 +513,15 @@ def test_api_team_get_fails():
         with login_as_user(app, name="user_name") as client:
             r = client.get("/api/v1/teams/1/fails")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_fails_after_freze_time():
     """Can a user get /api/v1/teams/<team_id>/fails after freeze time"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
-        team = gen_team(app.db, name="team1", email="team1@ctfd.io", member_count=1)
+        team = gen_team(app.db, name="team1", email="team1@kmactf.io", member_count=1)
 
         team_member = team.members[0]
         tm_name = team_member.name
@@ -550,22 +550,22 @@ def test_api_team_get_fails_after_freze_time():
             with login_as_user(app, name="admin") as client:
                 r = client.get("/api/v1/teams/1/fails")
                 assert r.get_json()["meta"]["count"] == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_awards_not_logged_in():
     """Can a user get /api/v1/teams/me/awards if not logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/teams/me/awards", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_me_awards_logged_in():
     """Can a user get /api/v1/teams/me/awards if logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -575,12 +575,12 @@ def test_api_team_get_me_awards_logged_in():
         with login_as_user(app, name="user_name") as client:
             r = client.get("/api/v1/teams/me/awards")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_awards():
     """Can a user get /api/v1/teams/<team_id>/awards if logged in"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -590,15 +590,15 @@ def test_api_team_get_awards():
         with login_as_user(app, name="user_name") as client:
             r = client.get("/api/v1/teams/1/awards")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_awards_after_freze_time():
     """Can a user get /api/v1/teams/<team_id>/awards after freeze time"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
-        team = gen_team(app.db, name="team1", email="team1@ctfd.io", member_count=1)
+        team = gen_team(app.db, name="team1", email="team1@kmactf.io", member_count=1)
 
         team_member = team.members[0]
         tm_name = team_member.name
@@ -626,15 +626,15 @@ def test_api_team_get_awards_after_freze_time():
                 r = client.get("/api/v1/teams/1/awards")
                 data = r.get_json()["data"]
                 assert len(data) == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_patch_password():
     """Can a user change their team password /api/v1/teams/me if logged in as the captain"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
-        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")  # ID 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")  # ID 3
+        user1 = gen_user(app.db, name="user1", email="user1@kmactf.io")  # ID 2
+        user2 = gen_user(app.db, name="user2", email="user2@kmactf.io")  # ID 3
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -673,15 +673,15 @@ def test_api_team_patch_password():
 
 def test_api_accessing_hidden_banned_users():
     """Hidden/Banned users should not be visible to normal users, only to admins"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
-        register_user(app, name="user2", email="user2@ctfd.io")
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
+        register_user(app, name="user2", email="user2@kmactf.io")
+        register_user(app, name="visible_user", email="visible_user@kmactf.io")
 
         user = Users.query.filter_by(id=2).first()
         team = gen_team(
-            app.db, name="hidden_team", email="hidden_team@ctfd.io", hidden=True
+            app.db, name="hidden_team", email="hidden_team@kmactf.io", hidden=True
         )
         team.members.append(user)
         user.team_id = team.id
@@ -689,7 +689,7 @@ def test_api_accessing_hidden_banned_users():
 
         user = Users.query.filter_by(id=3).first()
         team = gen_team(
-            app.db, name="banned_team", email="banned_team@ctfd.io", banned=True
+            app.db, name="banned_team", email="banned_team@kmactf.io", banned=True
         )
         team.members.append(user)
         user.team_id = team.id
@@ -716,12 +716,12 @@ def test_api_accessing_hidden_banned_users():
             assert client.get("/api/v1/teams/2/solves").status_code == 200
             assert client.get("/api/v1/teams/2/fails").status_code == 200
             assert client.get("/api/v1/teams/2/awards").status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_without_team_challenge_interaction():
     """Can a user interact with challenges without having joined a team?"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
         gen_challenge(app.db)
@@ -739,7 +739,7 @@ def test_api_user_without_team_challenge_interaction():
             )
 
         # Create a user with a team
-        user = gen_user(app.db, email="user_name@ctfd.io")
+        user = gen_user(app.db, email="user_name@kmactf.io")
         team = gen_team(app.db)
         team.members.append(user)
         user.team_id = team.id
@@ -756,4 +756,4 @@ def test_api_user_without_team_challenge_interaction():
                 ).status_code
                 == 200
             )
-    destroy_ctfd(app)
+    destroy_kmactf(app)

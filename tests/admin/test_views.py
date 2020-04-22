@@ -4,8 +4,8 @@
 from flask import Flask
 
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_page,
     gen_team,
@@ -22,7 +22,7 @@ def get_bp_urls(blueprint):
 
 def test_admin_access():
     """Can a user access admin pages?"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_page(app.db, title="title", route="/route", content="content")
         gen_challenge(app.db)
@@ -68,15 +68,15 @@ def test_admin_access():
         for route in routes:
             r = admin.get(route)
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_get_admin_as_user():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         r = client.get("/admin")
         assert r.status_code == 302
         assert r.location.startswith("http://localhost/login")
-    destroy_ctfd(app)
+    destroy_kmactf(app)

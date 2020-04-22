@@ -119,7 +119,7 @@ $(() => {
       $.ajax({
         type: "POST",
         url:
-          "https://ctfd.us15.list-manage.com/subscribe/post-json?u=6c7fa6feeced52775aec9d015&id=dd1484208e&c=?",
+          "https://www.facebook.com/",
         data: {
           EMAIL: email,
           subscribe: "Subscribe",

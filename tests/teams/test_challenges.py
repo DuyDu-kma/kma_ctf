@@ -3,8 +3,8 @@
 
 from KMActf.utils.scores import get_standings
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     gen_team,
@@ -15,10 +15,10 @@ from tests.helpers import (
 
 def test_challenge_team_submit():
     """Is a user's solved challenge reflected by other team members"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
-        second_user = gen_user(app.db, name="user", email="second@ctfd.io")
+        second_user = gen_user(app.db, name="user", email="second@kmactf.io")
         team = gen_team(app.db)
         user.team_id = team.id
         second_user.team_id = team.id
@@ -37,4 +37,4 @@ def test_challenge_team_submit():
         standings = get_standings()
         assert standings[0][2] == "team_name"
         assert standings[0][3] == 100
-    destroy_ctfd(app)
+    destroy_kmactf(app)

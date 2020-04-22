@@ -14,18 +14,18 @@ def test_validate_country_code():
 
 def test_validate_email():
     """Test that the check_email_format() works properly"""
-    assert validate_email("user@ctfd.io") is True
+    assert validate_email("user@kmactf.io") is True
     assert validate_email("user+plus@gmail.com") is True
     assert validate_email("user.period1234@gmail.com") is True
     assert validate_email("user.period1234@b.c") is True
     assert validate_email("user.period1234@b") is False
     assert validate_email("no.ampersand") is False
     assert validate_email("user@") is False
-    assert validate_email("@ctfd.io") is False
-    assert validate_email("user.io@ctfd") is False
-    assert validate_email("user\\@ctfd") is False
+    assert validate_email("@kmactf.io") is False
+    assert validate_email("user.io@kmactf") is False
+    assert validate_email("user\\@kmactf") is False
 
-    for invalid_email in ["user.@ctfd.io", ".user@ctfd.io", "user@ctfd..io"]:
+    for invalid_email in ["user.@kmactf.io", ".user@kmactf.io", "user@kmactf..io"]:
         try:
             assert validate_email(invalid_email) is False
         except AssertionError:

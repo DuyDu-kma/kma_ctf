@@ -11,8 +11,8 @@ from KMActf.utils import set_config
 from KMActf.utils.config.pages import get_pages
 from KMActf.utils.encoding import hexencode
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_file,
     gen_page,
@@ -23,17 +23,17 @@ from tests.helpers import (
 
 def test_index():
     """Does the index page return a 200 by default"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_page():
     """Test that users can access pages that are created in the database"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_page(
             app.db, title="Title", route="this-is-a-route", content="This is some HTML"
@@ -42,12 +42,12 @@ def test_page():
         with app.test_client() as client:
             r = client.get("/this-is-a-route")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_draft_pages():
     """Test that draft pages can't be seen"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_page(
             app.db,
@@ -65,12 +65,12 @@ def test_draft_pages():
         client = login_as_user(app)
         r = client.get("/this-is-a-route")
         assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_page_requiring_auth():
     """Test that pages properly require authentication"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_page(
             app.db,
@@ -89,12 +89,12 @@ def test_page_requiring_auth():
         client = login_as_user(app)
         r = client.get("/this-is-a-route")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_hidden_pages():
     """Test that hidden pages aren't on the navbar but can be loaded"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         page = gen_page(
             app.db,
@@ -115,24 +115,24 @@ def test_hidden_pages():
             r = client.get("/this-is-a-hidden-route")
             assert r.status_code == 200
             assert "This is some HTML" in r.get_data(as_text=True)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_not_found():
     """Should return a 404 for pages that are not found"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/this-should-404")
             assert r.status_code == 404
             r = client.post("/this-should-404")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_themes_handler():
     """Test that the themes handler is working properly"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/themes/core/static/css/main.min.css")
@@ -147,12 +147,12 @@ def test_themes_handler():
             assert r.status_code == 404
             r = client.get("/themes/core/static/../../../utils.py")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_pages_routing_and_rendering():
     """Test that pages are routing and rendering"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         html = """##The quick brown fox jumped over the lazy dog"""
         route = "test"
@@ -163,22 +163,22 @@ def test_pages_routing_and_rendering():
             r = client.get("/test")
             output = r.get_data(as_text=True)
             assert "<h2>The quick brown fox jumped over the lazy dog</h2>" in output
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_get_profile():
     """Can a registered user load their private profile (/profile)"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         r = client.get("/profile")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_can_access_files():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         from KMActf.utils.uploads import rmdir
 
@@ -269,11 +269,11 @@ def test_user_can_access_files():
                     assert r.get_data(as_text=True) == "testing file load"
         finally:
             rmdir(directory)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_can_access_files_with_auth_token():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         from KMActf.utils.uploads import rmdir
 
@@ -384,11 +384,11 @@ def test_user_can_access_files_with_auth_token():
                         assert r.get_data(as_text=True) == "testing file load"
         finally:
             rmdir(directory)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_can_access_files_if_view_after_ctf():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         from KMActf.utils.uploads import rmdir
 
@@ -430,4 +430,4 @@ def test_user_can_access_files_if_view_after_ctf():
         finally:
             rmdir(directory)
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)

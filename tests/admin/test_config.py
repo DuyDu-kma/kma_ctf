@@ -2,8 +2,8 @@ import random
 
 from KMActf.models import Challenges, Fails, Solves, Teams, Tracking, Users
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     gen_challenge,
     gen_fail,
@@ -18,7 +18,7 @@ from tests.helpers import (
 
 
 def test_reset():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         base_user = "user"
 
@@ -28,7 +28,7 @@ def test_reset():
 
         for x in range(10):
             user = base_user + str(x)
-            user_email = user + "@ctfd.io"
+            user_email = user + "@kmactf.io"
             user_obj = gen_user(app.db, name=user, email=user_email)
             gen_award(app.db, user_id=user_obj.id)
             gen_solve(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
@@ -50,11 +50,11 @@ def test_reset():
         assert Solves.query.count() == 0
         assert Fails.query.count() == 0
         assert Tracking.query.count() == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_reset_team_mode():
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         base_user = "user"
         base_team = "team"
@@ -65,10 +65,10 @@ def test_reset_team_mode():
 
         for x in range(10):
             user = base_user + str(x)
-            user_email = user + "@ctfd.io"
+            user_email = user + "@kmactf.io"
             user_obj = gen_user(app.db, name=user, email=user_email)
             team_obj = gen_team(
-                app.db, name=base_team + str(x), email=base_team + str(x) + "@ctfd.io"
+                app.db, name=base_team + str(x), email=base_team + str(x) + "@kmactf.io"
             )
             team_obj.members.append(user_obj)
             team_obj.captain_id = user_obj.id
@@ -97,4 +97,4 @@ def test_reset_team_mode():
         assert Solves.query.count() == 0
         assert Fails.query.count() == 0
         assert Tracking.query.count() == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)

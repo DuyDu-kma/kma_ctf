@@ -4,8 +4,8 @@
 from KMActf.models import Teams, Users
 from KMActf.utils import set_config
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     gen_team,
     gen_user,
@@ -16,7 +16,7 @@ from tests.helpers import (
 
 def test_teams_get():
     """Can a user get /teams"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
             set_config("account_visibility", "public")
@@ -28,15 +28,15 @@ def test_teams_get():
             set_config("account_visibility", "admins")
             r = client.get("/teams")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_accessing_hidden_teams():
     """Hidden teams should not give any data from /teams or /api/v1/teams"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
+        register_user(app, name="visible_user", email="visible_user@kmactf.io")
         with login_as_user(app, name="visible_user") as client:
             user = Users.query.filter_by(id=2).first()
             team = gen_team(app.db, name="visible_team", hidden=True)
@@ -49,12 +49,12 @@ def test_accessing_hidden_teams():
             assert client.get("/api/v1/teams/1/solves").status_code == 404
             assert client.get("/api/v1/teams/1/fails").status_code == 404
             assert client.get("/api/v1/teams/1/awards").status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_hidden_teams_visibility():
     """Hidden teams should not show up on /teams or /api/v1/teams or /api/v1/scoreboard"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
@@ -99,34 +99,34 @@ def test_hidden_teams_visibility():
             r = client.get("/api/v1/scoreboard")
             response = r.get_data(as_text=True)
             assert team.name in response
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_teams_get_user_mode():
     """Can a user get /teams if user mode"""
-    app = create_ctfd(user_mode="users")
+    app = create_kmactf(user_mode="users")
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/teams")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_teams_new_get():
     """Can a user get /teams/new"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/teams/new")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_teams_new_post():
     """Can a user post /teams/new"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         gen_user(app.db, name="user")
         with login_as_user(app) as client:
@@ -144,12 +144,12 @@ def test_teams_new_post():
             incorrect_data["name"] = ""
             r = client.post("/teams/new", data=incorrect_data)
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_team_get():
     """Can a user get /team"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -159,12 +159,12 @@ def test_team_get():
         with login_as_user(app, name="user_name", password="password") as client:
             r = client.get("/team")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_teams_id_get():
     """Can a user get /teams/<int:team_id>"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
@@ -174,12 +174,12 @@ def test_teams_id_get():
         with login_as_user(app, name="user_name", password="password") as client:
             r = client.get("/teams/1")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_team_size_limit():
     """Only team_size amount of members can join a team"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         set_config("team_size", 1)
 
@@ -209,4 +209,4 @@ def test_team_size_limit():
             r = client.post("/teams/join", data=data)
             resp = r.get_data(as_text=True)
             assert len(Teams.query.filter_by(id=team_id).first().members) == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)

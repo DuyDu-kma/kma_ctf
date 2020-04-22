@@ -8,85 +8,85 @@ from KMActf.models import Users, db
 from KMActf.utils import get_config, set_config
 from KMActf.utils.crypto import verify_password
 from KMActf.utils.security.signing import serialize
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user, register_user
 
 
 def test_register_user():
     """Can a user be registered"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         user_count = Users.query.count()
         assert user_count == 2  # There's the admin user and the created user
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_register_unicode_user():
     """Can a user with a unicode name be registered"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app, name="你好")
         user_count = Users.query.count()
         assert user_count == 2  # There's the admin user and the created user
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_register_duplicate_username():
     """A user shouldn't be able to use an already registered team name"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(
             app,
             name="user1",
-            email="user1@ctfd.io",
+            email="user1@kmactf.io",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="user1",
-            email="user2@ctfd.io",
+            email="user2@kmactf.io",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="admin  ",
-            email="admin2@ctfd.io",
+            email="admin2@kmactf.io",
             password="password",
             raise_for_error=False,
         )
         user_count = Users.query.count()
         assert user_count == 2  # There's the admin user and the first created user
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_register_duplicate_email():
     """A user shouldn't be able to use an already registered email address"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(
             app,
             name="user1",
-            email="user1@ctfd.io",
+            email="user1@kmactf.io",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="user2",
-            email="user1@ctfd.io",
+            email="user1@kmactf.io",
             password="password",
             raise_for_error=False,
         )
         user_count = Users.query.count()
         assert user_count == 2  # There's the admin user and the first created user
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_register_whitelisted_email():
     """A user shouldn't be able to register with an email that isn't on the whitelist"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config(
             "domain_whitelist", "whitelisted.com, whitelisted.org, whitelisted.net"
@@ -104,12 +104,12 @@ def test_register_whitelisted_email():
 
         register_user(app, name="user3", email="user@whitelisted.net")
         assert Users.query.count() == 4
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(
@@ -121,12 +121,12 @@ def test_user_bad_login():
         assert r.location.startswith(
             "http://localhost/login"
         )  # We got redirected to login
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_login():
     """Can a registered user can login"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -135,26 +135,26 @@ def test_user_login():
             r.location != "http://localhost/login"
         )  # We didn't get redirected to login
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_login_with_email():
     """Can a registered user can login with an email address instead of a team name"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
-        client = login_as_user(app, name="user@ctfd.io", password="password")
+        client = login_as_user(app, name="user@kmactf.io", password="password")
         r = client.get("/profile")
         assert (
             r.location != "http://localhost/login"
         )  # We didn't get redirected to login
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_get_logout():
     """Can a registered user load /logout"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -162,12 +162,12 @@ def test_user_get_logout():
         r = client.get("/challenges")
         assert r.location == "http://localhost/login?next=%2Fchallenges%3F"
         assert r.status_code == 302
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_isnt_admin():
     """A registered user cannot access admin pages"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -183,12 +183,12 @@ def test_user_isnt_admin():
             r = client.get("/admin/{}".format(page))
             assert r.location.startswith("http://localhost/login?next=")
             assert r.status_code == 302
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_expired_confirmation_links():
     """Test that expired confirmation links are reported to the user"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2019-02-24 03:21:34"):
         set_config("verify_emails", True)
 
@@ -202,12 +202,12 @@ def test_expired_confirmation_links():
         assert "Your confirmation link has expired" in r.get_data(as_text=True)
         user = Users.query.filter_by(email="user@user.com").first()
         assert user.verified is not True
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_invalid_confirmation_links():
     """Test that invalid confirmation links are reported to the user"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("verify_emails", True)
 
@@ -221,12 +221,12 @@ def test_invalid_confirmation_links():
         assert "Your confirmation token is invalid" in r.get_data(as_text=True)
         user = Users.query.filter_by(email="user@user.com").first()
         assert user.verified is not True
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_expired_reset_password_link():
     """Test that expired reset password links are reported to the user"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
@@ -242,12 +242,12 @@ def test_expired_reset_password_link():
             r = client.get(forgot_link)
 
             assert "Your link has expired" in r.get_data(as_text=True)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_invalid_reset_password_link():
     """Test that invalid reset password links are reported to the user"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
@@ -263,12 +263,12 @@ def test_invalid_reset_password_link():
             r = client.get(forgot_link)
 
             assert "Your reset token is invalid" in r.get_data(as_text=True)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_contact_for_password_reset():
     """Test that if there is no mailserver configured, users should contact admins"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app, name="user1", email="user@user.com")
 
@@ -277,13 +277,13 @@ def test_contact_for_password_reset():
             r = client.get(forgot_link)
 
             assert "Contact a CTF organizer" in r.get_data(as_text=True)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch("smtplib.SMTP")
 def test_user_can_confirm_email(mock_smtp):
     """Test that a user is capable of confirming their email address"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2012-01-14 03:21:34"):
         # Set KMActf to only allow confirmed users and send emails
         set_config("verify_emails", True)
@@ -326,7 +326,7 @@ def test_user_can_confirm_email(mock_smtp):
 
             r = client.get("http://localhost/confirm")
             assert r.location == "http://localhost/settings"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch("smtplib.SMTP")
@@ -334,7 +334,7 @@ def test_user_can_reset_password(mock_smtp):
     """Test that a user is capable of resetting their password"""
     from email.mime.text import MIMEText
 
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2012-01-14 03:21:34"):
         # Set KMActf to send emails
         set_config("mail_server", "localhost")
@@ -400,11 +400,11 @@ def test_user_can_reset_password(mock_smtp):
             # Make sure that the user's password changed
             user = Users.query.filter_by(email="user@user.com").first()
             assert verify_password("passwordtwo", user.password)
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_banned_user():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -416,4 +416,4 @@ def test_banned_user():
         for route in routes:
             r = client.get(route)
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)

@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  ctfd:
+  kmactf:
     build: .
     user: root
     restart: always
@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     environment:
       - UPLOAD_FOLDER=/var/uploads
-      - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
+      - DATABASE_URL=mysql+pymysql://root:kmactf@db/kmactf
       - REDIS_URL=redis://cache:6379
       - WORKERS=1
       - LOG_FOLDER=/var/log/KMActf
@@ -29,10 +29,10 @@ services:
     image: mariadb:10.4
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=ctfd
-      - MYSQL_USER=ctfd
-      - MYSQL_PASSWORD=ctfd
-      - MYSQL_DATABASE=ctfd
+      - MYSQL_ROOT_PASSWORD=kmactf
+      - MYSQL_USER=kmactf
+      - MYSQL_PASSWORD=kmactf
+      - MYSQL_DATABASE=kmactf
     volumes:
       - .data/mysql:/var/lib/mysql
     networks:

@@ -3,12 +3,12 @@
 
 from flask.testing import FlaskClient
 
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user
 
 
 def test_api_csrf_failure():
     """Test that API requests require the CSRF-Token header"""
-    app = create_ctfd()
+    app = create_kmactf()
     app.test_client_class = FlaskClient
     with app.app_context():
         with login_as_user(app, "admin") as client:
@@ -41,4 +41,4 @@ def test_api_csrf_failure():
                 },
             )
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)

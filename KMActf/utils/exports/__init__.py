@@ -71,7 +71,7 @@ class KMActfSerializer(JSONSerializer):
                 fh.close()
 
 
-SERIALIZERS["ctfd"] = KMActfSerializer  # Load the custom serializer
+SERIALIZERS["kmactf"] = KMActfSerializer  # Load the custom serializer
 
 
 def export_ctf():
@@ -88,7 +88,7 @@ def export_ctf():
     for table in tables:
         result = db[table].all()
         result_file = six.BytesIO()
-        datafreeze.freeze(result, format="ctfd", fileobj=result_file)
+        datafreeze.freeze(result, format="kmactf", fileobj=result_file)
         result_file.seek(0)
         backup_zip.writestr("db/{}.json".format(table), result_file.read())
 

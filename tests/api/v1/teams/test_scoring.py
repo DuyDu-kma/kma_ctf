@@ -3,12 +3,12 @@
 
 from KMActf.models import Users
 from KMActf.utils import set_config
-from tests.helpers import create_ctfd, destroy_ctfd, gen_award, gen_team, login_as_user
+from tests.helpers import create_kmactf, destroy_kmactf, gen_award, gen_team, login_as_user
 
 
 def test_api_team_place_hidden_if_scores_hidden():
     """/api/v1/teams/me should not reveal team place if scores aren't visible"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     with app.app_context():
         gen_team(app.db)
         app.db.session.commit()
@@ -39,4 +39,4 @@ def test_api_team_place_hidden_if_scores_hidden():
             resp = r.get_json()
             print(resp)
             assert resp["data"]["place"] == "1st"
-    destroy_ctfd(app)
+    destroy_kmactf(app)

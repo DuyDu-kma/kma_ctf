@@ -6,8 +6,8 @@ from freezegun import freeze_time
 from KMActf.models import Challenges, Fails, Solves
 from KMActf.utils import set_config, text_type
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     gen_hint,
@@ -20,33 +20,33 @@ def test_user_get_challenges():
     """
     Can a registered user load /challenges
     """
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         r = client.get("/challenges")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_get_chals():
     """
     Can a registered user load /chals
     """
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         r = client.get("/api/v1/challenges")
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_viewing_challenges():
     """
     Test that users can see added challenges
     """
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -54,29 +54,29 @@ def test_viewing_challenges():
         r = client.get("/api/v1/challenges")
         chals = r.get_json()["data"]
         assert len(chals) == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_viewing_challenge():
     """Test that users can see individual challenges"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         gen_challenge(app.db)
         r = client.get("/api/v1/challenges/1")
         assert r.get_json()
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 # def test_chals_solves():
 #     """Test that the /chals/solves endpoint works properly"""
-#     app = create_ctfd()
+#     app = create_kmactf()
 #     with app.app_context():
 #         # Generate 5 users
 #         for c in range(1, 6):
 #             name = "user{}".format(c)
-#             email = "user{}@ctfd.io".format(c)
+#             email = "user{}@kmactf.io".format(c)
 #             register_user(app, name=name, email=email, password="password")
 #
 #         # Generate 5 challenges
@@ -121,12 +121,12 @@ def test_viewing_challenge():
 #             ''')
 #             received = json.loads(output)
 #             assert saved == received
-#     destroy_ctfd(app)
+#     destroy_kmactf(app)
 
 
 def test_submitting_correct_flag():
     """Test that correct flags are correct"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -138,12 +138,12 @@ def test_submitting_correct_flag():
         resp = r.get_json()["data"]
         assert resp.get("status") == "correct"
         assert resp.get("message") == "Correct"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_submitting_correct_static_case_insensitive_flag():
     """Test that correct static flags are correct if the static flag is marked case_insensitive"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -155,12 +155,12 @@ def test_submitting_correct_static_case_insensitive_flag():
         resp = r.get_json()["data"]
         assert resp.get("status") == "correct"
         assert resp.get("message") == "Correct"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_submitting_correct_regex_case_insensitive_flag():
     """Test that correct regex flags are correct if the regex flag is marked case_insensitive"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -178,12 +178,12 @@ def test_submitting_correct_regex_case_insensitive_flag():
         resp = r.get_json()["data"]
         assert resp.get("status") == "correct"
         assert resp.get("message") == "Correct"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_submitting_incorrect_flag():
     """Test that incorrect flags are incorrect"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -195,12 +195,12 @@ def test_submitting_incorrect_flag():
         resp = r.get_json()["data"]
         assert resp.get("status") == "incorrect"
         assert resp.get("message") == "Incorrect"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_submitting_unicode_flag():
     """Test that users can submit a unicode flag"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -213,12 +213,12 @@ def test_submitting_unicode_flag():
         resp = r.get_json()["data"]
         assert resp.get("status") == "correct"
         assert resp.get("message") == "Correct"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenges_with_max_attempts():
     """Test that users are locked out of a challenge after they reach max_attempts"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -246,12 +246,12 @@ def test_challenges_with_max_attempts():
 
         solves = Solves.query.count()
         assert solves == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenge_kpm_limit():
     """Test that users are properly ratelimited when submitting flags"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -280,12 +280,12 @@ def test_challenge_kpm_limit():
 
         solves = Solves.query.count()
         assert solves == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_that_view_challenges_unregistered_works():
     """Test that view_challenges_unregistered works"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         chal = gen_challenge(app.db, name=text_type("🐺"))
         chal_id = chal.id
@@ -311,12 +311,12 @@ def test_that_view_challenges_unregistered_works():
         assert r.status_code == 403
         assert r.get_json().get("data").get("status") == "authentication_required"
         assert r.get_json().get("data").get("message") is None
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_hidden_challenge_is_unreachable():
     """Test that hidden challenges return 404 and do not insert a solve or wrong key"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -349,12 +349,12 @@ def test_hidden_challenge_is_unreachable():
 
         wrong_keys = Fails.query.count()
         assert wrong_keys == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_hidden_challenge_is_unsolveable():
     """Test that hidden challenges return 404 and do not insert a solve or wrong key"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -371,12 +371,12 @@ def test_hidden_challenge_is_unsolveable():
 
         wrong_keys = Fails.query.count()
         assert wrong_keys == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenge_with_requirements_is_unsolveable():
     """Test that a challenge with a requirement is unsolveable without first solving the requirement"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
@@ -425,12 +425,12 @@ def test_challenge_with_requirements_is_unsolveable():
         assert r.status_code == 200
         assert resp["status"] == "correct"
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenges_cannot_be_solved_while_paused():
     """Test that challenges cannot be solved when the CTF is paused"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("paused", True)
 
@@ -463,12 +463,12 @@ def test_challenges_cannot_be_solved_while_paused():
         # There are no wrong keys saved
         wrong_keys = Fails.query.count()
         assert wrong_keys == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenge_board_under_view_after_ctf():
     """Test that the challenge board does not show an error under view_after_ctf"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("view_after_ctf", True)
         set_config(
@@ -510,11 +510,11 @@ def test_challenge_board_under_view_after_ctf():
             assert r.status_code == 200
             assert r.get_json()["data"]["status"] == "correct"
             assert Solves.query.count() == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenges_under_view_after_ctf():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context(), freeze_time("2017-10-7"):
         set_config(
             "start", "1507089600"
@@ -577,11 +577,11 @@ def test_challenges_under_view_after_ctf():
         assert r.get_json()["data"]["status"] == "incorrect"
         assert Fails.query.count() == 0
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenges_admin_only_as_user():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("challenge_visibility", "admins")
 
@@ -603,4 +603,4 @@ def test_challenges_admin_only_as_user():
         data = {"submission": "flag", "challenge_id": 1}
         r = admin.post("/api/v1/challenges/attempt", json=data)
         assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)

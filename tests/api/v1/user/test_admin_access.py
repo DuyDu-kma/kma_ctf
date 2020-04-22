@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user, register_user
 
 
 def test_api_hint_404():
     """Are admin protected resources accessible by admins/non-admins"""
-    app = create_ctfd()
+    app = create_kmactf()
     endpoints = [
         "/api/v1/configs/{}",
         "/api/v1/challenges/types",
@@ -44,4 +44,4 @@ def test_api_hint_404():
             r = client.get(endpoint.format(1))
             assert r.status_code == 302
             assert r.location.startswith("http://localhost/login")
-    destroy_ctfd(app)
+    destroy_kmactf(app)

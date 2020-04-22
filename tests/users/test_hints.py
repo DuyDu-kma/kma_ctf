@@ -6,8 +6,8 @@ from freezegun import freeze_time
 from KMActf.models import Unlocks, Users, db
 from KMActf.utils import set_config, text_type
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     gen_challenge,
     gen_flag,
@@ -19,10 +19,10 @@ from tests.helpers import (
 
 def test_user_cannot_unlock_hint():
     """Test that a user can't unlock a hint if they don't have enough points"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client():
-            register_user(app, name="user1", email="user1@ctfd.io")
+            register_user(app, name="user1", email="user1@kmactf.io")
 
             chal = gen_challenge(app.db, value=100)
             chal_id = chal.id
@@ -39,15 +39,15 @@ def test_user_cannot_unlock_hint():
                 resp = r.get_json()
                 assert resp["data"].get("content") is None
                 assert resp["data"].get("cost") == 10
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_can_unlock_hint():
     """Test that a user can unlock a hint if they have enough points"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client():
-            register_user(app, name="user1", email="user1@ctfd.io")
+            register_user(app, name="user1", email="user1@kmactf.io")
 
             chal = gen_challenge(app.db, value=100)
             chal_id = chal.id
@@ -81,12 +81,12 @@ def test_user_can_unlock_hint():
 
                 user = Users.query.filter_by(name="user1").first()
                 assert user.score == 5
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_unlocking_hints_with_no_cost():
     """Test that hints with no cost can be unlocked"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         chal = gen_challenge(app.db)
@@ -96,12 +96,12 @@ def test_unlocking_hints_with_no_cost():
         r = client.get("/api/v1/hints/1")
         resp = r.get_json()["data"]
         assert resp.get("content") == "This is a hint"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_unlocking_hints_with_cost_during_ctf_with_points():
     """Test that hints with a cost are unlocked if you have the points"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         chal = gen_challenge(app.db)
@@ -120,12 +120,12 @@ def test_unlocking_hints_with_cost_during_ctf_with_points():
 
         user = Users.query.filter_by(id=2).first()
         assert user.score == 90
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_unlocking_hints_with_cost_during_ctf_without_points():
     """Test that hints with a cost are not unlocked if you don't have the points"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         chal = gen_challenge(app.db)
@@ -148,12 +148,12 @@ def test_unlocking_hints_with_cost_during_ctf_without_points():
 
         user = Users.query.filter_by(id=2).first()
         assert user.score == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_unlocking_hints_with_cost_before_ctf():
     """Test that hints are not unlocked if the CTF hasn't begun"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         chal = gen_challenge(app.db)
@@ -187,12 +187,12 @@ def test_unlocking_hints_with_cost_before_ctf():
 
             assert user.score == 100
             assert Unlocks.query.count() == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_unlocking_hints_with_cost_during_ended_ctf():
     """Test that hints with a cost are not unlocked if the CTF has ended"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         chal = gen_challenge(app.db)
@@ -224,12 +224,12 @@ def test_unlocking_hints_with_cost_during_ended_ctf():
             user = Users.query.filter_by(id=2).first()
             assert user.score == 100
             assert Unlocks.query.count() == 0
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_unlocking_hints_with_cost_during_frozen_ctf():
     """Test that hints with a cost are unlocked if the CTF is frozen."""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config(
             "freeze", "1507262400"
@@ -255,12 +255,12 @@ def test_unlocking_hints_with_cost_during_frozen_ctf():
 
             user = Users.query.filter_by(id=2).first()
             assert user.score == 100
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_unlocking_hint_for_unicode_challenge():
     """Test that hints for challenges with unicode names can be unlocked"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         chal = gen_challenge(app.db, name=text_type("🐺"))
@@ -273,4 +273,4 @@ def test_unlocking_hint_for_unicode_challenge():
         assert r.status_code == 200
         resp = r.get_json()["data"]
         assert resp.get("content") == "This is a hint"
-    destroy_ctfd(app)
+    destroy_kmactf(app)

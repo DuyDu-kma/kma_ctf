@@ -3,8 +3,8 @@
 
 from KMActf.cache import clear_standings
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     gen_solve,
@@ -15,10 +15,10 @@ from tests.helpers import (
 
 def test_scoreboard_is_cached():
     """Test that /api/v1/scoreboard is properly cached and cleared"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         # create user1
-        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user1", email="user1@kmactf.io")
 
         # create challenge
         chal = gen_challenge(app.db, value=100)
@@ -49,4 +49,4 @@ def test_scoreboard_is_cached():
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
             assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
             assert app.cache.get("view/scoreboard.listing") is None
-    destroy_ctfd(app)
+    destroy_kmactf(app)

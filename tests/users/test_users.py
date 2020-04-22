@@ -3,8 +3,8 @@
 
 from KMActf.models import Users
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     login_as_user,
     register_user,
@@ -13,11 +13,11 @@ from tests.helpers import (
 
 def test_accessing_hidden_users():
     """Hidden users should not give any data from /users or /api/v1/users"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")  # ID 2
-        register_user(app, name="hidden_user", email="hidden_user@ctfd.io")  # ID 3
-        register_user(app, name="banned_user", email="banned_user@ctfd.io")  # ID 4
+        register_user(app, name="visible_user", email="visible_user@kmactf.io")  # ID 2
+        register_user(app, name="hidden_user", email="hidden_user@kmactf.io")  # ID 3
+        register_user(app, name="banned_user", email="banned_user@kmactf.io")  # ID 4
         user = Users.query.filter_by(name="hidden_user").first()
         user.hidden = True
         app.db.session.commit()
@@ -37,12 +37,12 @@ def test_accessing_hidden_users():
             assert client.get("/api/v1/users/4/solves").status_code == 404
             assert client.get("/api/v1/users/4/fails").status_code == 404
             assert client.get("/api/v1/users/4/awards").status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_hidden_user_visibility():
     """Hidden users should not show up on /users or /api/v1/users or /api/v1/scoreboard"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app, name="hidden_user")
 
@@ -87,4 +87,4 @@ def test_hidden_user_visibility():
             r = client.get("/api/v1/scoreboard")
             response = r.get_data(as_text=True)
             assert user_name in response
-    destroy_ctfd(app)
+    destroy_kmactf(app)

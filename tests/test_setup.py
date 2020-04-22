@@ -4,11 +4,11 @@
 from KMActf.utils import get_config
 from KMActf.utils.security.csrf import generate_nonce
 from KMActf.utils.security.signing import serialize
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user, register_user
 
 
 def test_setup_integrations():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         user = login_as_user(app)
@@ -28,4 +28,4 @@ def test_setup_integrations():
         assert r.status_code == 200
         assert get_config("oauth_client_id") == "client_id"
         assert get_config("oauth_client_secret") == "client_secret"
-    destroy_ctfd(app)
+    destroy_kmactf(app)

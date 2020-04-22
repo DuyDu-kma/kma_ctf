@@ -4,8 +4,8 @@
 from KMActf.models import Teams, Users
 from KMActf.utils import set_config
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     login_as_user,
     login_with_mlc,
     register_user,
@@ -14,7 +14,7 @@ from tests.helpers import (
 
 def test_oauth_not_configured():
     """Test that OAuth redirection fails if OAuth settings aren't configured"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/oauth", follow_redirects=False)
@@ -22,16 +22,16 @@ def test_oauth_not_configured():
             r = client.get(r.location)
             resp = r.get_data(as_text=True)
             assert "OAuth Settings not configured" in resp
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_oauth_configured_flow():
     """Test that MLC integration works properly but does not allow registration (account creation) if disabled"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     app.config.update(
         {
-            "OAUTH_CLIENT_ID": "ctfd_testing_client_id",
-            "OAUTH_CLIENT_SECRET": "ctfd_testing_client_secret",
+            "OAUTH_CLIENT_ID": "kmactf_testing_client_id",
+            "OAUTH_CLIENT_SECRET": "kmactf_testing_client_secret",
             "OAUTH_AUTHORIZATION_ENDPOINT": "http://auth.localhost/oauth/authorize",
             "OAUTH_TOKEN_ENDPOINT": "http://auth.localhost/oauth/token",
             "OAUTH_API_ENDPOINT": "http://api.localhost/user",
@@ -55,7 +55,7 @@ def test_oauth_configured_flow():
 
         # Users should be able to register now
         assert Users.query.count() == 2
-        user = Users.query.filter_by(email="user@ctfd.io").first()
+        user = Users.query.filter_by(email="user@kmactf.io").first()
         assert user.oauth_id == 1337
         assert user.team_id == 1
 
@@ -75,16 +75,16 @@ def test_oauth_configured_flow():
             assert sess["type"]
             assert sess["email"]
             assert sess["nonce"]
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_oauth_login_upgrade():
     """Test that users who use MLC after having registered will be associated with their MLC account"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     app.config.update(
         {
-            "OAUTH_CLIENT_ID": "ctfd_testing_client_id",
-            "OAUTH_CLIENT_SECRET": "ctfd_testing_client_secret",
+            "OAUTH_CLIENT_ID": "kmactf_testing_client_id",
+            "OAUTH_CLIENT_SECRET": "kmactf_testing_client_secret",
             "OAUTH_AUTHORIZATION_ENDPOINT": "http://auth.localhost/oauth/authorize",
             "OAUTH_TOKEN_ENDPOINT": "http://auth.localhost/oauth/token",
             "OAUTH_API_ENDPOINT": "http://api.localhost/user",
@@ -112,4 +112,4 @@ def test_oauth_login_upgrade():
         assert user.oauth_id
         assert user.verified
         assert user.team_id
-    destroy_ctfd(app)
+    destroy_kmactf(app)

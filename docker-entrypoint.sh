@@ -7,11 +7,11 @@ ACCESS_LOG=${ACCESS_LOG:--}
 ERROR_LOG=${ERROR_LOG:--}
 WORKER_TEMP_DIR=${WORKER_TEMP_DIR:-/dev/shm}
 
-# Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
-if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
+# Check that a .kmactf_secret_key file or SECRET_KEY envvar is set
+if [ ! -f .kmactf_secret_key ] && [ -z "$SECRET_KEY" ]; then
     if [ $WORKERS -gt 1 ]; then
         echo "[ ERROR ] You are configured to use more than 1 worker."
-        echo "[ ERROR ] To do this, you must define the SECRET_KEY environment variable or create a .ctfd_secret_key file."
+        echo "[ ERROR ] To do this, you must define the SECRET_KEY environment variable or create a .kmactf_secret_key file."
         echo "[ ERROR ] Exiting..."
         exit 1
     fi

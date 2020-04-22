@@ -1,8 +1,8 @@
 from KMActf.models import Challenges
 from KMActf.utils import set_config
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     login_as_user,
@@ -12,7 +12,7 @@ from tests.helpers import (
 
 def test_create_new_challenge():
     """Test that an admin can create a challenge properly"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app, name="admin", password="password")
@@ -33,12 +33,12 @@ def test_create_new_challenge():
         r = client.get("/api/v1/challenges/1")
         assert r.get_json().get("data")["id"] == 1
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_hidden_challenge_is_reachable():
     """Test that hidden challenges are visible for admins"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app, name="admin", password="password")
@@ -66,11 +66,11 @@ def test_hidden_challenge_is_reachable():
         assert r.status_code == 200
         resp = r.get_json()["data"]
         assert resp.get("status") == "correct"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_challenges_admin_only_as_user():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("challenge_visibility", "admins")
 
@@ -92,4 +92,4 @@ def test_challenges_admin_only_as_user():
         data = {"submission": "flag", "challenge_id": 1}
         r = client.post("/api/v1/challenges/attempt", json=data)
         assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, destroy_ctfd, gen_user
+from tests.helpers import create_kmactf, destroy_kmactf, gen_user
 
 
-def test_ctfd_setup_redirect():
+def test_kmactf_setup_redirect():
     """Test that a fresh KMActf instance redirects to /setup"""
-    app = create_ctfd(setup=False)
+    app = create_kmactf(setup=False)
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/users")
@@ -17,11 +17,11 @@ def test_ctfd_setup_redirect():
             r = client.get("/themes/core/static/css/main.dev.css")
             r = client.get("/themes/core/static/css/main.min.css")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
-def test_ctfd_setup_verification():
-    app = create_ctfd(setup=False)
+def test_kmactf_setup_verification():
+    app = create_kmactf(setup=False)
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/setup")
@@ -32,7 +32,7 @@ def test_ctfd_setup_verification():
                     "ctf_name": "KMActf",
                     "ctf_description": "CTF description",
                     "name": "test",
-                    "email": "test@ctfd.io",
+                    "email": "test@kmactf.io",
                     "password": "",
                     "user_mode": "users",
                     "nonce": sess.get("nonce"),
@@ -40,7 +40,7 @@ def test_ctfd_setup_verification():
             r = client.post("/setup", data=data)
             assert "longer password" in r.get_data(as_text=True)
 
-            gen_user(app.db, name="test", email="test@ctfd.io")
+            gen_user(app.db, name="test", email="test@kmactf.io")
 
             data["password"] = "password"
             r = client.post("/setup", data=data)
@@ -49,8 +49,8 @@ def test_ctfd_setup_verification():
             assert "name is already taken" in resp
 
             data["name"] = "admin"
-            data["email"] = "admin@ctfd.io"
+            data["email"] = "admin@kmactf.io"
             r = client.post("/setup", data=data)
             assert r.status_code == 302
             assert r.location == "http://localhost/"
-    destroy_ctfd(app)
+    destroy_kmactf(app)

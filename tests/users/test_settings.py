@@ -3,23 +3,23 @@
 
 from KMActf.models import Users
 from KMActf.utils.crypto import verify_password
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
+from tests.helpers import create_kmactf, destroy_kmactf, login_as_user, register_user
 
 
 def test_user_set_profile():
     """Test that a user can set and remove their information in their profile"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
 
         data = {
             "name": "user",
-            "email": "user@ctfd.io",
+            "email": "user@kmactf.io",
             "confirm": "",
             "password": "",
             "affiliation": "affiliation_test",
-            "website": "https://ctfd.io",
+            "website": "https://kmactf.io",
             "country": "US",
         }
 
@@ -38,7 +38,7 @@ def test_user_set_profile():
 
         data = {
             "name": "user",
-            "email": "user@ctfd.io",
+            "email": "user@kmactf.io",
             "confirm": "",
             "password": "",
             "affiliation": "",
@@ -53,19 +53,19 @@ def test_user_set_profile():
         assert user.affiliation == data["affiliation"]
         assert user.website == data["website"]
         assert user.country == data["country"]
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_user_can_change_password():
     """Test that a user can change their password and is prompted properly"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
 
         data = {
             "name": "user",
-            "email": "user@ctfd.io",
+            "email": "user@kmactf.io",
             "confirm": "",
             "password": "new_password",
             "affiliation": "",
@@ -98,4 +98,4 @@ def test_user_can_change_password():
         assert r.status_code == 200
         user = Users.query.filter_by(id=2).first()
         assert verify_password(data["password"], user.password) is True
-    destroy_ctfd(app)
+    destroy_kmactf(app)

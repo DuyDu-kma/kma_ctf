@@ -8,8 +8,8 @@ from KMActf.schemas.users import UserSchema
 from KMActf.utils import set_config
 from KMActf.utils.crypto import verify_password
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_award,
     gen_challenge,
     gen_fail,
@@ -23,7 +23,7 @@ from tests.helpers import (
 
 def test_api_users_get_public():
     """Can a user get /api/v1/users if users are public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             set_config("account_visibility", "public")
@@ -35,12 +35,12 @@ def test_api_users_get_public():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/users")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_get_private():
     """Can a user get /api/v1/users if users are public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             set_config("account_visibility", "public")
@@ -52,12 +52,12 @@ def test_api_users_get_private():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/users")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_get_admins():
     """Can a user get /api/v1/users if users are public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             set_config("account_visibility", "public")
@@ -69,22 +69,22 @@ def test_api_users_get_admins():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/users")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_post_non_admin():
     """Can a user post /api/v1/users if not admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.post("/api/v1/users", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_post_admin():
     """Can a user post /api/v1/users if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as client:
             # Create user
@@ -103,12 +103,12 @@ def test_api_users_post_admin():
             client = login_as_user(app)
             r = client.get("/profile")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_post_admin_with_attributes():
     """Can a user post /api/v1/users with user settings"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as client:
             # Create user
@@ -132,19 +132,19 @@ def test_api_users_post_admin_with_attributes():
             assert user.banned
             assert user.hidden
             assert user.verified
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_post_admin_duplicate_information():
     """Can an admin create a user with duplicate information"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app, "admin") as client:
             # Duplicate email
             r = client.post(
                 "/api/v1/users",
-                json={"name": "user2", "email": "user@ctfd.io", "password": "password"},
+                json={"name": "user2", "email": "user@kmactf.io", "password": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -155,27 +155,27 @@ def test_api_users_post_admin_duplicate_information():
             # Duplicate user
             r = client.post(
                 "/api/v1/users",
-                json={"name": "user", "email": "user2@ctfd.io", "password": "password"},
+                json={"name": "user", "email": "user2@kmactf.io", "password": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
             assert resp["errors"]["name"]
             assert resp["success"] is False
             assert Users.query.count() == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_patch_admin_duplicate_information():
     """Can an admin modify a user with duplicate information"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(app, name="user1", email="user1@kmactf.io", password="password")
+        register_user(app, name="user2", email="user2@kmactf.io", password="password")
         with login_as_user(app, "admin") as client:
             # Duplicate name
             r = client.patch(
                 "/api/v1/users/1",
-                json={"name": "user2", "email": "user@ctfd.io", "password": "password"},
+                json={"name": "user2", "email": "user@kmactf.io", "password": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -185,27 +185,27 @@ def test_api_users_patch_admin_duplicate_information():
             # Duplicate email
             r = client.patch(
                 "/api/v1/users/1",
-                json={"name": "user", "email": "user2@ctfd.io", "password": "password"},
+                json={"name": "user", "email": "user2@kmactf.io", "password": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
             assert resp["errors"]["email"]
             assert resp["success"] is False
             assert Users.query.count() == 3
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_users_patch_duplicate_information():
     """Can a user modify their information to another user's"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(app, name="user1", email="user1@kmactf.io", password="password")
+        register_user(app, name="user2", email="user2@kmactf.io", password="password")
         with login_as_user(app, "user1") as client:
             # Duplicate email
             r = client.patch(
                 "/api/v1/users/me",
-                json={"name": "user1", "email": "user2@ctfd.io", "confirm": "password"},
+                json={"name": "user1", "email": "user2@kmactf.io", "confirm": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -215,19 +215,19 @@ def test_api_users_patch_duplicate_information():
             # Duplicate user
             r = client.patch(
                 "/api/v1/users/me",
-                json={"name": "user2", "email": "user1@ctfd.io", "confirm": "password"},
+                json={"name": "user2", "email": "user1@kmactf.io", "confirm": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
             assert resp["errors"]["name"]
             assert resp["success"] is False
             assert Users.query.count() == 3
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_public():
     """Can a user get /api/v1/team/<user_id> if users are public"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             set_config("account_visibility", "public")
@@ -240,12 +240,12 @@ def test_api_team_get_public():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/users/2")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_private():
     """Can a user get /api/v1/users/<user_id> if users are private"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
@@ -259,12 +259,12 @@ def test_api_team_get_private():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/users/2")
             assert r.status_code == 404
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_team_get_admin():
     """Can a user get /api/v1/users/<user_id> if users are viewed by admins only"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, "admin") as client:
             gen_user(app.db)
@@ -277,23 +277,23 @@ def test_api_team_get_admin():
             set_config("account_visibility", "admins")
             r = client.get("/api/v1/users/2")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_patch_non_admin():
     """Can a user patch /api/v1/users/<user_id> if not admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with app.test_client() as client:
             r = client.patch("/api/v1/users/2", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_patch_admin():
     """Can a user patch /api/v1/users/<user_id> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app, "admin") as client:
@@ -301,7 +301,7 @@ def test_api_user_patch_admin():
                 "/api/v1/users/2",
                 json={
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@kmactf.io",
                     "password": "password",
                     "country": "US",
                     "verified": True,
@@ -311,23 +311,23 @@ def test_api_user_patch_admin():
             user_data = r.get_json()["data"][0]
             assert user_data["country"] == "US"
             assert user_data["verified"] is True
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_delete_non_admin():
     """Can a user delete /api/v1/users/<user_id> if not admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with app.test_client() as client:
             r = client.delete("/api/v1/teams/2", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_delete_admin():
     """Can a user patch /api/v1/users/<user_id> if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         user = Users.query.filter_by(id=2).first()
@@ -337,43 +337,43 @@ def test_api_user_delete_admin():
             assert r.status_code == 200
             assert r.get_json().get("data") is None
         assert Users.query.filter_by(id=2).first() is None
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_not_logged_in():
     """Can a user get /api/v1/users/me if not logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/users/me")
             assert r.status_code == 302
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_logged_in():
     """Can a user get /api/v1/users/me if logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/users/me")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_patch_me_not_logged_in():
     """Can a user patch /api/v1/users/me if not logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.patch("/api/v1/users/me", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_patch_me_logged_in():
     """Can a user patch /api/v1/users/me if logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
@@ -381,7 +381,7 @@ def test_api_user_patch_me_logged_in():
                 "/api/v1/users/me",
                 json={
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@kmactf.io",
                     "password": "password",
                     "confirm": "password",
                     "country": "US",
@@ -389,19 +389,19 @@ def test_api_user_patch_me_logged_in():
             )
             assert r.status_code == 200
             assert r.get_json()["data"]["country"] == "US"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_admin_user_patch_me_logged_in():
     """Can an admin patch /api/v1/users/me"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, name="admin") as client:
             r = client.patch(
                 "/api/v1/users/me",
                 json={
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@kmactf.io",
                     "password": "password",
                     "confirm": "password",
                     "country": "US",
@@ -412,13 +412,13 @@ def test_api_admin_user_patch_me_logged_in():
 
             user = Users.query.filter_by(id=1).first()
             assert user.name == "user"
-            assert user.email == "user@ctfd.io"
-    destroy_ctfd(app)
+            assert user.email == "user@kmactf.io"
+    destroy_kmactf(app)
 
 
 def test_api_user_change_name():
     """Can a user change their name via the API"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
@@ -449,12 +449,12 @@ def test_api_user_change_name():
             resp = r.get_json()
             assert resp["data"]["name"] == "new_name"
             assert resp["success"] is True
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_change_email():
     """Test that users can change their email via the API"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         user = Users.query.filter_by(id=2).first()
@@ -480,12 +480,12 @@ def test_api_user_change_email():
             assert resp["success"] is True
             user = Users.query.filter_by(id=2).first()
             assert user.email == "new_email@email.com"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_change_verify_email():
     """Test that users are marked unconfirmed if they change their email and verify_emails is turned on"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("verify_emails", True)
         register_user(app)
@@ -503,12 +503,12 @@ def test_api_user_change_verify_email():
             assert resp["success"] is True
             user = Users.query.filter_by(id=2).first()
             assert user.verified is False
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_change_email_under_whitelist():
     """Test that users can only change emails to ones in the whitelist"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         set_config(
@@ -532,47 +532,47 @@ def test_api_user_change_email_under_whitelist():
             resp = r.get_json()
             assert resp["data"]["email"] == "new_email@whitelisted.com"
             assert resp["success"] is True
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_solves_not_logged_in():
     """Can a user get /api/v1/users/me/solves if not logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/users/me/solves", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_solves_logged_in():
     """Can a user get /api/v1/users/me/solves if logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/users/me/solves")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_solves():
     """Can a user get /api/v1/users/<user_id>/solves if logged in"""
-    app = create_ctfd(user_mode="users")
+    app = create_kmactf(user_mode="users")
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/users/2/solves")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_solves_after_freze_time():
     """Can a user get /api/v1/users/<user_id>/solves after freeze time"""
-    app = create_ctfd(user_mode="users")
+    app = create_kmactf(user_mode="users")
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@kmactf.io")
+        register_user(app, name="user2", email="user2@kmactf.io")
 
         # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         set_config("freeze", "1507262400")
@@ -607,47 +607,47 @@ def test_api_user_get_solves_after_freze_time():
             r = admin.get("/api/v1/users/2/solves")
             data = r.get_json()["data"]
             assert len(data) == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_fails_not_logged_in():
     """Can a user get /api/v1/users/me/fails if not logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/users/me/fails", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_fails_logged_in():
     """Can a user get /api/v1/users/me/fails if logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/users/me/fails")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_fails():
     """Can a user get /api/v1/users/<user_id>/fails if logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/users/2/fails")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_fails_after_freze_time():
     """Can a user get /api/v1/users/<user_id>/fails after freeze time"""
-    app = create_ctfd(user_mode="users")
+    app = create_kmactf(user_mode="users")
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@kmactf.io")
+        register_user(app, name="user2", email="user2@kmactf.io")
 
         # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         set_config("freeze", "1507262400")
@@ -679,47 +679,47 @@ def test_api_user_get_fails_after_freze_time():
 
             r = admin.get("/api/v1/users/2/fails")
             assert r.get_json()["meta"]["count"] == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_awards_not_logged_in():
     """Can a user get /api/v1/users/me/awards if not logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/api/v1/users/me/awards", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_me_awards_logged_in():
     """Can a user get /api/v1/users/me/awards if logged in"""
-    app = create_ctfd(user_mode="users")
+    app = create_kmactf(user_mode="users")
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/users/me/awards")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_awards():
     """Can a user get /api/v1/users/<user_id>/awards if logged in"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/users/2/awards")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_awards_after_freze_time():
     """Can a user get /api/v1/users/<user_id>/awards after freeze time"""
-    app = create_ctfd(user_mode="users")
+    app = create_kmactf(user_mode="users")
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@kmactf.io")
+        register_user(app, name="user2", email="user2@kmactf.io")
 
         # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         set_config("freeze", "1507262400")
@@ -750,15 +750,15 @@ def test_api_user_get_awards_after_freze_time():
             r = admin.get("/api/v1/users/2/awards")
             data = r.get_json()["data"]
             assert len(data) == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_accessing_hidden_users():
     """Hidden users should not be visible to normal users, only to admins"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
-        register_user(app, name="hidden_user", email="hidden_user@ctfd.io")  # ID 3
+        register_user(app, name="visible_user", email="visible_user@kmactf.io")
+        register_user(app, name="hidden_user", email="hidden_user@kmactf.io")  # ID 3
         user = Users.query.filter_by(name="hidden_user").first()
         user.hidden = True
         app.db.session.commit()
@@ -774,15 +774,15 @@ def test_api_accessing_hidden_users():
             assert client.get("/api/v1/users/3/solves").status_code == 200
             assert client.get("/api/v1/users/3/fails").status_code == 200
             assert client.get("/api/v1/users/3/awards").status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_accessing_banned_users():
     """Banned users should not be visible to normal users, only to admins"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
-        register_user(app, name="banned_user", email="banned_user@ctfd.io")  # ID 3
+        register_user(app, name="visible_user", email="visible_user@kmactf.io")
+        register_user(app, name="banned_user", email="banned_user@kmactf.io")  # ID 3
         user = Users.query.filter_by(name="banned_user").first()
         user.banned = True
         app.db.session.commit()
@@ -798,12 +798,12 @@ def test_api_accessing_banned_users():
             assert client.get("/api/v1/users/3/solves").status_code == 200
             assert client.get("/api/v1/users/3/fails").status_code == 200
             assert client.get("/api/v1/users/3/awards").status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_send_email():
     """Can an admin post /api/v1/users/<user_id>/email"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
 
         register_user(app)
@@ -845,15 +845,15 @@ def test_api_user_send_email():
             )
             assert r.status_code == 200
 
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_user_get_schema():
     """Can a user get /api/v1/users/<user_id> doesn't return unnecessary data"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")  # ID 2
-        register_user(app, name="user2", email="user2@ctfd.io")  # ID 3
+        register_user(app, name="user1", email="user1@kmactf.io")  # ID 2
+        register_user(app, name="user2", email="user2@kmactf.io")  # ID 3
 
         with app.test_client() as client:
             r = client.get("/api/v1/users/3")
@@ -868,4 +868,4 @@ def test_api_user_get_schema():
             assert sorted(data.keys()) == sorted(
                 UserSchema.views["user"] + ["score", "place"]
             )
-    destroy_ctfd(app)
+    destroy_kmactf(app)

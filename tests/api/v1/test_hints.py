@@ -3,8 +3,8 @@
 
 from KMActf.models import Hints
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_hint,
     login_as_user,
@@ -13,7 +13,7 @@ from tests.helpers import (
 
 
 def test_api_hint_get_non_admin():
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
@@ -27,22 +27,22 @@ def test_api_hint_get_non_admin():
             """Can the users post /api/v1/hints if not admin"""
             r = client.post("/api/v1/hints", json="")
             assert r.status_code == 403
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hint_get_admin():
     """Can the users get /api/v1/hints if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         with login_as_user(app, name="admin") as client:
             r = client.get("/api/v1/hints", json="")
             assert r.status_code == 200
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_api_hint_post_admin():
     """Can the users post /api/v1/hints if admin"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_challenge(app.db)
         with login_as_user(app, name="admin") as client:
@@ -51,12 +51,12 @@ def test_api_hint_post_admin():
             )
             assert r.status_code == 200
             assert Hints.query.count() == 1
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_admins_can_preview_hints():
     """Test that admins are able to bypass restrictions and preview hints with ?preview=true"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_challenge(app.db)
         gen_hint(app.db, challenge_id=1, cost=100)
@@ -70,12 +70,12 @@ def test_admins_can_preview_hints():
         assert r.status_code == 200
         hint = r.get_json()
         assert hint["data"]["content"] == "This is a hint"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_users_cannot_preview_hints():
     """Test that users aren't able to preview hints"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         gen_challenge(app.db)
         gen_hint(app.db, challenge_id=1, cost=100)
@@ -90,4 +90,4 @@ def test_users_cannot_preview_hints():
         assert r.status_code == 200
         hint = r.get_json()
         assert hint["data"].get("content") is None
-    destroy_ctfd(app)
+    destroy_kmactf(app)

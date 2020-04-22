@@ -14,7 +14,7 @@ from KMActf.utils.crypto import sha256
 
 def update_check(force=False):
     """
-    Makes a request to ctfd.io to check if there is a new version of KMActf available. The service is provided in return
+    Makes a request to kmactf to check if there is a new version of KMActf available. The service is provided in return
     for users opting in to anonymous usage data collection. Users can opt-out of update checks by specifying
     UPDATE_CHECK = False in config.py
 

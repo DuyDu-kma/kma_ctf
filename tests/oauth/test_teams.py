@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 from KMActf.models import Teams
 from KMActf.utils import set_config
-from tests.helpers import create_ctfd, destroy_ctfd, gen_team, login_with_mlc
+from tests.helpers import create_kmactf, destroy_kmactf, gen_team, login_with_mlc
 
 
 def test_team_size_limit():
     """Only team_size amount of members can join a team even via MLC"""
-    app = create_ctfd(user_mode="teams")
+    app = create_kmactf(user_mode="teams")
     app.config.update(
         {
-            "OAUTH_CLIENT_ID": "ctfd_testing_client_id",
-            "OAUTH_CLIENT_SECRET": "ctfd_testing_client_secret",
+            "OAUTH_CLIENT_ID": "kmactf_testing_client_id",
+            "OAUTH_CLIENT_SECRET": "kmactf_testing_client_secret",
             "OAUTH_AUTHORIZATION_ENDPOINT": "http://auth.localhost/oauth/authorize",
             "OAUTH_TOKEN_ENDPOINT": "http://auth.localhost/oauth/token",
             "OAUTH_API_ENDPOINT": "http://api.localhost/user",
@@ -29,4 +29,4 @@ def test_team_size_limit():
         set_config("team_size", 2)
         login_with_mlc(app, team_name="team_name", team_oauth_id=1234)
         assert len(Teams.query.filter_by(id=team_id).first().members) == 2
-    destroy_ctfd(app)
+    destroy_kmactf(app)

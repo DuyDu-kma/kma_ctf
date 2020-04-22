@@ -10,13 +10,13 @@ from KMActf.utils.email import (
     verify_email_address,
     successful_registration_notification,
 )
-from tests.helpers import create_ctfd, destroy_ctfd
+from tests.helpers import create_kmactf, destroy_kmactf
 
 
 @patch("smtplib.SMTP")
 def test_sendmail_with_smtp_from_config_file(mock_smtp):
     """Does sendmail work properly with simple SMTP mail servers using file configuration"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["MAIL_SERVER"] = "localhost"
         app.config["MAIL_PORT"] = "25"
@@ -42,13 +42,13 @@ def test_sendmail_with_smtp_from_config_file(mock_smtp):
         mock_smtp.return_value.sendmail.assert_called_once_with(
             from_addr, [to_addr], email_msg.as_string()
         )
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch("smtplib.SMTP")
 def test_sendmail_with_smtp_from_db_config(mock_smtp):
     """Does sendmail work properly with simple SMTP mail servers using database configuration"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
@@ -74,13 +74,13 @@ def test_sendmail_with_smtp_from_db_config(mock_smtp):
         mock_smtp.return_value.sendmail.assert_called_once_with(
             from_addr, [to_addr], email_msg.as_string()
         )
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch.object(requests, "post")
 def test_sendmail_with_mailgun_from_config_file(fake_post_request):
     """Does sendmail work properly with Mailgun using file configuration"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["MAILGUN_API_KEY"] = "key-1234567890-file-config"
         app.config["MAILGUN_BASE_URL"] = "https://api.mailgun.net/v3/file.faked.com"
@@ -110,20 +110,20 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "KMActf <noreply@ctfd.io>",
+            "from": "KMActf <noreply@kmactf.io>",
             "subject": "Message from KMActf",
         }
 
         assert fake_response.status_code == 200
         assert status is True
         assert message == "Email sent"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch.object(requests, "post")
 def test_sendmail_with_mailgun_from_db_config(fake_post_request):
     """Does sendmail work properly with Mailgun using database configuration"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         app.config["MAILGUN_API_KEY"] = "key-1234567890-file-config"
         app.config["MAILGUN_BASE_URL"] = "https://api.mailgun.net/v3/file.faked.com"
@@ -157,20 +157,20 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "KMActf <noreply@ctfd.io>",
+            "from": "KMActf <noreply@kmactf.io>",
             "subject": "Message from KMActf",
         }
 
         assert fake_response.status_code == 200
         assert status is True
         assert message == "Email sent"
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch("smtplib.SMTP")
 def test_verify_email(mock_smtp):
     """Does verify_email send emails"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
@@ -208,13 +208,13 @@ def test_verify_email(mock_smtp):
         mock_smtp.return_value.sendmail.assert_called_with(
             from_addr, [to_addr], email_msg.as_string()
         )
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 @patch("smtplib.SMTP")
 def test_successful_registration_email(mock_smtp):
     """Does successful_registration_notification send emails"""
-    app = create_ctfd()
+    app = create_kmactf()
     with app.app_context():
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
@@ -245,4 +245,4 @@ def test_successful_registration_email(mock_smtp):
         mock_smtp.return_value.sendmail.assert_called_with(
             from_addr, [to_addr], email_msg.as_string()
         )
-    destroy_ctfd(app)
+    destroy_kmactf(app)

@@ -7,8 +7,8 @@ from KMActf.models import Challenges, Flags, Teams, Users
 from KMActf.utils import text_type
 from KMActf.utils.exports import export_ctf, import_ctf
 from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
+    create_kmactf,
+    destroy_kmactf,
     gen_challenge,
     gen_flag,
     gen_hint,
@@ -21,7 +21,7 @@ from tests.helpers import (
 
 def test_export_ctf():
     """Test that KMActf can export the database"""
-    app = create_ctfd()
+    app = create_kmactf()
     if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
         with app.app_context():
             register_user(app)
@@ -49,24 +49,24 @@ def test_export_ctf():
             assert data["results"][1]["requirements"] == {"prerequisites": [1]}
 
             os.remove("export.test_export_ctf.zip")
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
 
 def test_import_ctf():
     """Test that KMActf can import a CTF"""
-    app = create_ctfd()
+    app = create_kmactf()
     if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
         with app.app_context():
             base_user = "user"
             for x in range(10):
                 user = base_user + str(x)
-                user_email = user + "@ctfd.io"
+                user_email = user + "@kmactf.io"
                 gen_user(app.db, name=user, email=user_email)
 
             base_team = "team"
             for x in range(5):
                 team = base_team + str(x)
-                team_email = team + "@ctfd.io"
+                team_email = team + "@kmactf.io"
                 gen_team(app.db, name=team, email=team_email)
 
             for x in range(9):
@@ -84,9 +84,9 @@ def test_import_ctf():
 
             with open("export.test_import_ctf.zip", "wb") as f:
                 f.write(backup.read())
-    destroy_ctfd(app)
+    destroy_kmactf(app)
 
-    app = create_ctfd()
+    app = create_kmactf()
     # TODO: These databases should work but they don't...
     if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
         with app.app_context():
@@ -101,4 +101,4 @@ def test_import_ctf():
 
                 chal = Challenges.query.filter_by(name="chal_name10").first()
                 assert chal.requirements == {"prerequisites": [1]}
-    destroy_ctfd(app)
+    destroy_kmactf(app)
