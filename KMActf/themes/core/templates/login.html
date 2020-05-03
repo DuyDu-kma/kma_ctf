@@ -5,59 +5,68 @@
 
 {% block content %}
 <div class="jumbotron">
-	<div class="container">
-		<h1>Login</h1>
-	</div>
+  <div class="container">
+    <h1>Login</h1>
+  </div>
 </div>
 <div class="container">
-	<div class="row">
-		<div class="col-md-6 offset-md-3">
-			{% for error in errors %}
-				<div class="alert alert-danger alert-dismissable" role="alert">
-				  <span class="sr-only">Error:</span>
-				  {{ error }}
-				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-				</div>
-			{% endfor %}
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      {% for error in errors %}
+      <div class="alert alert-danger alert-dismissable" role="alert">
+        <span class="sr-only">Error:</span>
+        {{ error }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">×</span></button>
+      </div>
+      {% endfor %}
 
-			{% if integrations.mlc() %}
-			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">
-				Login with Major League Cyber
-			</a>
+      {% if integrations.mlc() %}
+      <a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">
+        Login with Major League Cyber
+      </a>
 
-			<hr>
-			{% endif %}
-			<img class="img-responsive ctf_logo" src="themes/core/static/img/kmalogo.png">
+      <hr>
+      {% endif %}
+      <img class="img-responsive ctf_logo" src="themes/core/static/img/kmalogo.png">
 
-			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
-				<div class="form-group">
-					<label for="name-input">
-						User Name or Email
-					</label>
-					<input class="form-control" type="text" name="name" id="name-input" />
-				</div>
-				<div class="form-group">
-					<label for="password-input">
-						Password
-					</label>
-					<input class="form-control" type="password" name="password" id="password-input" />
-				</div>
-				<div class="row pt-3">
-					<div class="col-md-6">
-						<a class="float-left align-text-to-button" href="{{ url_for('auth.reset_password') }}">
-							Forgot your password?
-						</a>
-					</div>
-					<div class="col-md-6">
-						<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">
-							Login
-						</button>
-					</div>
-				</div>
-				<input type="hidden" name="nonce" value="{{ nonce }}">
-			</form>
-		</div>
-	</div>
+      <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+        <div class="form-group">
+          <label for="name-input">
+            User Name or Email
+          </label>
+          <input class="form-control" type="text" name="name" id="name-input" />
+        </div>
+        <div class="form-group">
+          <label for="password-input">
+            Password
+          </label>
+          <input class="form-control" type="password" name="password" id="password-input" />
+        </div>
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right" style="padding: 8px 250px;">
+              Login
+            </button>
+          </div>
+          <div class="col-md-12">
+            <a class="float-left align-text-to-button" href="{{ url_for('auth.reset_password') }}">
+              Forgot your password?
+            </a>
+          </div>
+        </div>
+        <input type="hidden" name="nonce" value="{{ nonce }}">
+      </form>
+      <div class="login-3">
+        <button class="loginBtn loginBtn--facebook">
+          Login with Facebook
+        </button>
+        <button class="loginBtn loginBtn--google">
+          Login with Google
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 

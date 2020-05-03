@@ -52,7 +52,7 @@ def update_check(force=False):
                 "upload_provider": get_app_config("UPLOAD_PROVIDER"),
             }
             check = requests.post(
-                "https://versioning.ctfd.io/", json=params, timeout=0.1
+                "https://actvn.edu.vn/", json=params, timeout=0.1
             ).json()
         except requests.exceptions.RequestException:
             pass

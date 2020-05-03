@@ -1,216 +1,296 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>KMA_CTF</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}" type="image/x-icon">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/fonts.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/main.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/core.css') }}">
-	{% block stylesheets %}{% endblock %}
-	{% for stylesheet in get_registered_stylesheets() %}
-		{% if stylesheet.startswith('http') %}
-			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
-		{% elif request.script_root %}
-			<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/{{ stylesheet }}">
-		{% else %}
-			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
-		{% endif %}
-	{% endfor %}
-	<script type="text/javascript">
-		var init = {
-			'urlRoot': "{{ request.script_root }}",
-			'csrfNonce': "{{ nonce }}",
-			'userMode': "{{ get_config('user_mode') }}",
-			'userId': {{ id if (id is defined) else 0 }},
-			'start': {{ get_config("start") | tojson }},
-			'end': {{ get_config("end") | tojson }},
+  <title>KMA_CTF</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ url_for('views.themes', path='css/fonts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('views.themes', path='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('views.themes', path='css/core.css') }}">
+  {% block stylesheets %}{% endblock %}
+  {% for stylesheet in get_registered_stylesheets() %}
+  {% if stylesheet.startswith('http') %}
+  <link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+  {% elif request.script_root %}
+  <link rel="stylesheet" type="text/css" href="{{ request.script_root }}/{{ stylesheet }}">
+  {% else %}
+  <link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+  {% endif %}
+  {% endfor %}
+  <script type="text/javascript">
+    var init = {
+      'urlRoot': "{{ request.script_root }}",
+      'csrfNonce': "{{ nonce }}",
+      'userMode': "{{ get_config('user_mode') }}",
+      'userId': {{ id if (id is defined) else 0 }},
+    'start': { { get_config("start") | tojson } },
+    'end': { { get_config("end") | tojson } },
 		}
-	</script>
-	{{ get_config('theme_header', '') | safe }}
+  </script>
+  <style>
+    /* Shared */
+    .loginBtn {
+      box-sizing: border-box;
+      position: relative;
+      /* width: 13em;  - apply for fixed size */
+      margin: 0.2em;
+      padding: 0 15px 0 46px;
+      border: none;
+      text-align: left;
+      line-height: 34px;
+      white-space: nowrap;
+      border-radius: 0.2em;
+      font-size: 16px;
+      color: #FFF;
+    }
+
+    .loginBtn:before {
+      content: "";
+      box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 34px;
+      height: 100%;
+    }
+
+    .loginBtn:focus {
+      outline: none;
+    }
+
+    .loginBtn:active {
+      box-shadow: inset 0 0 0 32px rgba(0, 0, 0, 0.1);
+    }
+
+
+    /* Facebook */
+    .loginBtn--facebook {
+      background-color: #4C69BA;
+      background-image: linear-gradient(#4C69BA, #3B55A0);
+      /*font-family: "Helvetica neue", Helvetica Neue, Helvetica, Arial, sans-serif;*/
+      text-shadow: 0 -1px 0 #354C8C;
+    }
+
+    .loginBtn--facebook:before {
+      border-right: #364e92 1px solid;
+      background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/14082/icon_facebook.png') 6px 6px no-repeat;
+    }
+
+    .loginBtn--facebook:hover,
+    .loginBtn--facebook:focus {
+      background-color: #5B7BD5;
+      background-image: linear-gradient(#5B7BD5, #4864B1);
+    }
+
+
+    /* Google */
+    .loginBtn--google {
+      /*font-family: "Roboto", Roboto, arial, sans-serif;*/
+      background: #DD4B39;
+    }
+
+    .loginBtn--google:before {
+      border-right: #BB3F30 1px solid;
+      background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/14082/icon_google.png') 6px 6px no-repeat;
+    }
+
+    .loginBtn--google:hover,
+    .loginBtn--google:focus {
+      background: #E74B37;
+    }
+    .login-3 {
+      margin-left: 65px;
+    }
+  </style>
+  {{ get_config('theme_header', '') | safe }}
 </head>
+
 <body>
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-		<div class="container">
-			<a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
-				{% if get_ctf_logo() %}
-				<img class="img-responsive ctf_logo" src="{{ url_for('views.files', path=get_ctf_logo()) }}" height="25" alt="{{ get_ctf_name() }}">
-				{% else %}
-				<img class="img-responsive ctf_logo" src="../themes/core/static/img/kmalogo3.png" height="25" alt="{{ get_ctf_name() }}">
-				{% endif %}
-			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
-					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="base-navbars">
-				<ul class="navbar-nav mr-auto">
-					{% for page in get_user_page_menu_bar() %}
-						{% if page.route.startswith('http://') or page.route.startswith('https://') %}
-							<li class="nav-item">
-								<a class="nav-link" href="{{ page.route }}">{{ page.title }}</a>
-							</li>
-						{% else %}
-							<li class="nav-item">
-								<a class="nav-link" href="{{ url_for('views.static_html', route=page.route) }}">{{ page.title }}</a>
-							</li>
-						{% endif %}
-					{% endfor %}
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
+        {% if get_ctf_logo() %}
+        <img class="img-responsive ctf_logo" src="{{ url_for('views.files', path=get_ctf_logo()) }}" height="25"
+          alt="{{ get_ctf_name() }}">
+        {% else %}
+        <img class="img-responsive ctf_logo" src="../themes/core/static/img/kmalogo3.png" height="25"
+          alt="{{ get_ctf_name() }}">
+        {% endif %}
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
+        aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="base-navbars">
+        <ul class="navbar-nav mr-auto">
+          {% for page in get_user_page_menu_bar() %}
+          {% if page.route.startswith('http://') or page.route.startswith('https://') %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ page.route }}">{{ page.title }}</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('views.static_html', route=page.route) }}">{{ page.title }}</a>
+          </li>
+          {% endif %}
+          {% endfor %}
 
-					{% if get_config('account_visibility') != 'admins' %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('users.listing') }}">Users</a>
-						</li>
-						{% if get_config('user_mode') == 'teams' %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('teams.listing') }}">Teams</a>
-						</li>
-						{% endif %}
-					{% endif %}
-					{% if get_config('score_visibility') != 'admins' %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('scoreboard.listing') }}">Scoreboard</a>
-						</li>
-					{% endif %}
-					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('challenges.listing') }}">Challenges</a>
-					</li>
-				</ul>
+          {% if get_config('account_visibility') != 'admins' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users.listing') }}">Users</a>
+          </li>
+          {% if get_config('user_mode') == 'teams' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('teams.listing') }}">Teams</a>
+          </li>
+          {% endif %}
+          {% endif %}
+          {% if get_config('score_visibility') != 'admins' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('scoreboard.listing') }}">Scoreboard</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('challenges.listing') }}">Challenges</a>
+          </li>
+        </ul>
 
-				<hr class="d-sm-flex d-md-flex d-lg-none">
+        <hr class="d-sm-flex d-md-flex d-lg-none">
 
-				<ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
-					{% if name is defined %}
-						{% if type == 'admin' %}
-							<li class="nav-item">
-								<a class="nav-link" href="{{ url_for('admin.view') }}">
-									<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Admin Panel">
-										<i class="fas fa-wrench d-none d-md-block d-lg-none"></i>
-									</span>
-									<span class="d-sm-block d-md-none d-lg-block">
-										<i class="fas fa-wrench pr-1"></i>Admin Panel
-									</span>
-								</a>
-							</li>
-						{% endif %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('views.notifications') }}">
-								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Notifications">
-									<i class="fas fa-bell d-none d-md-block d-lg-none"></i>
-								</span>
-								<span class="d-sm-block d-md-none d-lg-block">
-									<i class="fas fa-bell pr-1"></i>
-									<span class="badge badge-pill badge-danger badge-notification"></span>
-									Notifications
-								</span>
-							</a>
-						</li>
-						{% if config.user_mode() == "teams" %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('teams.private') }}">
-								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Team">
-									<i class="fas fa-users d-none d-md-block d-lg-none"></i>
-								</span>
-								<span class="d-sm-block d-md-none d-lg-block">
-									<i class="fas fa-users pr-1"></i>Team
-								</span>
-							</a>
-						</li>
-						{% endif %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('users.private') }}">
-								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Profile">
-									<i class="fas fa-user-circle d-none d-md-block d-lg-none"></i>
-								</span>
-								<span class="d-sm-block d-md-none d-lg-block">
-									<i class="fas fa-user-circle pr-1"></i>Profile
-								</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('views.settings') }}">
-								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Settings">
-									<i class="fas fa-cogs d-none d-md-block d-lg-none"></i>
-								</span>
-								<span class="d-sm-block d-md-none d-lg-block">
-									<i class="fas fa-cogs pr-1"></i>Settings
-								</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('auth.logout') }}">
-								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Logout">
-									<i class="fas fa-sign-out-alt d-none d-md-block d-lg-none"></i>
-								</span>
-								<span class="d-sm-block d-md-none d-lg-block">
-									<i class="fas fa-sign-out-alt pr-1"></i><span>Sign out</span>
-								</span>
-							</a>
-						</li>
-					{% else %}
-						{% if registration_visible() %}
-							<li class="nav-item">
-								<a class="nav-link" href="{{ url_for('auth.register') }}">
-									<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Register">
-										<i class="fas fa-user-plus d-none d-md-block d-lg-none"></i>
-									</span>
-									<span class="d-sm-block d-md-none d-lg-block">
-										<i class="fas fa-user-plus pr-1"></i>Register
-									</span>
-								</a>
-							</li>
-						{% endif %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('auth.login') }}">
-								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Login">
-									<i class="fas fa-sign-in-alt d-none d-md-block d-lg-none"></i>
-								</span>
-								<span class="d-sm-block d-md-none d-lg-block">
-									<i class="fas fa-sign-in-alt pr-1"></i>Login
-								</span>
-							</a>
-						</li>
-					{% endif %}
-				</ul>
-			</div>
-		</div>
-	</nav>
+        <ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
+          {% if name is defined %}
+          {% if type == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.view') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Admin Panel">
+                <i class="fas fa-wrench d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-wrench pr-1"></i>Admin Panel
+              </span>
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('views.notifications') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Notifications">
+                <i class="fas fa-bell d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-bell pr-1"></i>
+                <span class="badge badge-pill badge-danger badge-notification"></span>
+                Notifications
+              </span>
+            </a>
+          </li>
+          {% if config.user_mode() == "teams" %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('teams.private') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Team">
+                <i class="fas fa-users d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-users pr-1"></i>Team
+              </span>
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users.private') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Profile">
+                <i class="fas fa-user-circle d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-user-circle pr-1"></i>Profile
+              </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('views.settings') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Settings">
+                <i class="fas fa-cogs d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-cogs pr-1"></i>Settings
+              </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Logout">
+                <i class="fas fa-sign-out-alt d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-sign-out-alt pr-1"></i><span>Sign out</span>
+              </span>
+            </a>
+          </li>
+          {% else %}
+          {% if registration_visible() %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('auth.register') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Register">
+                <i class="fas fa-user-plus d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-user-plus pr-1"></i>Register
+              </span>
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('auth.login') }}">
+              <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Login">
+                <i class="fas fa-sign-in-alt d-none d-md-block d-lg-none"></i>
+              </span>
+              <span class="d-sm-block d-md-none d-lg-block">
+                <i class="fas fa-sign-in-alt pr-1"></i>Login
+              </span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-	<main role="main">
-		{% block content %}
-		{% endblock %}
-	</main>
+  <main role="main">
+    {% block content %}
+    {% endblock %}
+  </main>
 
-	<footer class="footer">
-		<div class="container text-center">
-			<a href="http://actvn.edu.vn/" class="text-secondary">
-				<small class="text-muted">Powered by KMA_CTF teams</small>
-			</a>
-		</div>
-	</footer>
+  <footer class="footer">
+    <div class="container text-center">
+      <a href="http://actvn.edu.vn/" class="text-secondary">
+        <small class="text-muted">Powered by KMA_CTF teams</small>
+      </a>
+    </div>
+  </footer>
 
-	<script defer src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
+  <script defer src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
+  <script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
+  <script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
 
-	{% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
-	{% endblock %}
+  {% block entrypoint %}
+  <script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
+  {% endblock %}
 
-	{% block scripts %}
-	{% endblock %}
+  {% block scripts %}
+  {% endblock %}
 
-	{% for script in get_registered_scripts() %}
-	{% if script.startswith('http') %}
-	<script defer src="{{ script }}"></script>
-	{% elif request.script_root %}
-	<script defer src="{{ request.script_root }}/{{ script }}"></script>
-	{% else %}
-	<script defer src="{{ script }}"></script>
-	{% endif %}
-	{% endfor %}
+  {% for script in get_registered_scripts() %}
+  {% if script.startswith('http') %}
+  <script defer src="{{ script }}"></script>
+  {% elif request.script_root %}
+  <script defer src="{{ request.script_root }}/{{ script }}"></script>
+  {% else %}
+  <script defer src="{{ script }}"></script>
+  {% endif %}
+  {% endfor %}
 
-	{{ get_config('theme_footer', '') | safe }}
+  {{ get_config('theme_footer', '') | safe }}
 </body>
+
 </html>
