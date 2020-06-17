@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.7
 WORKDIR /opt/KMActf
 RUN mkdir -p /opt/KMActf /var/log/KMActf /var/uploads
 
