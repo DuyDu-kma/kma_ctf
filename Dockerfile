@@ -2,15 +2,15 @@ FROM python:3.7
 WORKDIR /opt/KMActf
 RUN mkdir -p /opt/KMActf /var/log/KMActf /var/uploads
 
-RUN apt update && \
-    apt install libffi-dev \
-        gcc \
-        make \
-        musl-dev \
-        py-pip \
-        mysql-client \
-        git \
-        openssl-dev
+# RUN apt update && \
+#     apt install libffi-dev \
+#         gcc \
+#         make \
+#         musl-dev \
+#         py-pip \
+#         mysql-client \
+#         git \
+#         openssl-dev
 RUN apt install -y build-essential
 RUN apt install -y libpq-dev
 
