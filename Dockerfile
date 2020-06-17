@@ -11,8 +11,8 @@ RUN mkdir -p /opt/KMActf /var/log/KMActf /var/uploads
 #         mysql-client \
 #         git \
 #         openssl-dev
-RUN apt install -y build-essential
-RUN apt install -y libpq-dev
+# RUN apt install -y build-essential
+# RUN apt install -y libpq-dev
 
 COPY . /opt/KMActf
 
