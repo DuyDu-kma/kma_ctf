@@ -6,7 +6,7 @@ if not os.getenv("SECRET_KEY"):
     # Attempt to read the secret from the secret file
     # This will fail if the secret has not been written
     try:
-        with open(".ctfd_secret_key", "rb") as secret:
+        with open(".ctf_secret_key", "rb") as secret:
             key = secret.read()
     except (OSError, IOError):
         key = None
@@ -16,7 +16,7 @@ if not os.getenv("SECRET_KEY"):
         # Attempt to write the secret file
         # This will fail if the filesystem is read-only
         try:
-            with open(".ctfd_secret_key", "wb") as secret:
+            with open(".ctf_secret_key", "wb") as secret:
                 secret.write(key)
                 secret.flush()
         except (OSError, IOError):
@@ -39,16 +39,11 @@ class Config(object):
         interest of ease, KMActf will automatically create a secret key file for you. If you wish to add this secret key
         to your instance you should hard code this value to a random static value.
 
-        You can also remove .ctfd_secret_key from the .gitignore file and commit this file into whatever repository
-        you are using.
-
         http://flask.pocoo.org/docs/latest/quickstart/#sessions
 
     DATABASE_URL:
         The URI that specifies the username, password, hostname, port, and database of the server
         used to hold the KMActf database.
-
-        e.g. mysql+pymysql://root:<YOUR_PASSWORD_HERE>@localhost/ctfd
 
     CACHE_TYPE:
         Specifies how KMActf should cache configuration values. If CACHE_TYPE is set to 'redis', KMActf will make use
@@ -63,13 +58,10 @@ class Config(object):
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     """
     SECRET_KEY = os.getenv("SECRET_KEY") or key
-    # DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///{}/ctfd.db".format(
-    #     os.path.dirname(os.path.abspath(__file__))
-    # )
-    DATABASE_URL = "sqlite:///{}/ctfd.db".format(
+    DATABASE_URL = "sqlite:///{}/kmactf.db".format(
         os.path.dirname(os.path.abspath(__file__))
     )
-    #DATABASE_URL="postgres://deegngyryhhqie:c746948e4996fdfa9657e0df89fd9630c3e3b82d4f0c73af2106e7dfad5335ac@ec2-18-233-137-77.compute-1.amazonaws.com:5432/ddhft7a2esfghv?client_encoding='utf8'"
+
     REDIS_URL = os.getenv("REDIS_URL")
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
@@ -152,7 +144,7 @@ class Config(object):
     MAILGUN_BASE_URL
         Mailgun base url to send email over Mailgun
     """
-    MAILFROM_ADDR = os.getenv("MAILFROM_ADDR") or "noreply@ctfd.io"
+    MAILFROM_ADDR = os.getenv("MAILFROM_ADDR")
     MAIL_SERVER = os.getenv("MAIL_SERVER") or None
     MAIL_PORT = os.getenv("MAIL_PORT")
     MAIL_USEAUTH = os.getenv("MAIL_USEAUTH")
@@ -231,7 +223,6 @@ class Config(object):
 
     APPLICATION_ROOT:
         Specifies what path KMActf is mounted under. It can be used to run KMActf in a subdirectory.
-        Example: /ctfd
 
     SERVER_SENT_EVENTS:
         Specifies whether or not to enable to server-sent events based Notifications system.

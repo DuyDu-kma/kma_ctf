@@ -25,8 +25,8 @@
       'csrfNonce': "{{ nonce }}",
       'userMode': "{{ get_config('user_mode') }}",
       'userId': {{ id if (id is defined) else 0 }},
-    'start': { { get_config("start") | tojson } },
-    'end': { { get_config("end") | tojson } },
+    'start': {{ get_config("start") | tojson }},
+    'end': {{ get_config("end") | tojson }},
 		}
   </script>
   <style>

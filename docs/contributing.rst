@@ -81,6 +81,5 @@ The ``import.py`` script can be used to load in a KMActf export on the command l
 
 If you need to wipe KMActf completely, you should:
 
-* delete the database (KMActf/ctfd.db by default)
 * empty the cache. By default it will be stored in the ``.data`` folder if Redis is unavailable
 * (optional) remove the contents of the `KMActf/uploads` folder
