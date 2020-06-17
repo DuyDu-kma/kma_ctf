@@ -2,11 +2,8 @@ FROM python:3.7
 WORKDIR /opt/KMActf
 RUN mkdir -p /opt/KMActf /var/log/KMActf /var/uploads
 
-RUN apk update && \
-    apk add --no-cache \
-        python3 \
-        python3-dev \
-        linux-headers \
+RUN apt update && \
+    apt install linux-headers \
         libffi-dev \
         gcc \
         make \
