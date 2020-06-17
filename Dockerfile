@@ -3,8 +3,7 @@ WORKDIR /opt/KMActf
 RUN mkdir -p /opt/KMActf /var/log/KMActf /var/uploads
 
 RUN apt update && \
-    apt install linux-headers \
-        libffi-dev \
+    apt install libffi-dev \
         gcc \
         make \
         musl-dev \
