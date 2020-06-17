@@ -24,9 +24,9 @@ RUN for d in KMActf/plugins/*; do \
     done;
 
 RUN chmod +x /opt/KMActf/docker-entrypoint.sh
-RUN adduser -D -u 1001 -s /bin/sh KMActf
-RUN chown -R 1001:1001 /opt/KMActf /var/log/KMActf /var/uploads
+# RUN adduser -D -u 1001 -s /bin/sh KMActf
+# RUN chown -R 1001:1001 /opt/KMActf /var/log/KMActf /var/uploads
 
-USER 1001
+# USER 1001
 EXPOSE 8000
 ENTRYPOINT ["/opt/KMActf/docker-entrypoint.sh"]
