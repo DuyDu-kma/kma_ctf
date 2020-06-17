@@ -15,6 +15,8 @@ RUN apk update && \
         mysql-client \
         git \
         openssl-dev
+RUN apt-get install -y build-essential
+RUN apt-get install -y libpq-dev
 
 COPY . /opt/KMActf
 
