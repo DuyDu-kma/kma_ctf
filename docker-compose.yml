@@ -18,6 +18,7 @@ services:
     volumes:
       - .data/KMActf/logs:/var/log/KMActf
       - .data/KMActf/uploads:/var/uploads
+      - .data/KMActf/kmactf@db:/var/kmactf@db
       - .:/opt/KMActf:ro
     depends_on:
       - db
