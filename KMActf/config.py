@@ -58,7 +58,7 @@ class Config(object):
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     """
     SECRET_KEY = os.getenv("SECRET_KEY") or key
-    DATABASE_URL = "sqlite:///{}/kmactf.db".format(
+    DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///{}/kmactf.db".format(
         os.path.dirname(os.path.abspath(__file__))
     )
 
