@@ -31,6 +31,7 @@
       <img class="img-responsive ctf_logo" src="themes/core/static/img/kmalogo.png">
 
       <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+        
         <div class="form-group">
           <label for="name-input">
             User Name or Email
@@ -42,6 +43,17 @@
             Password
           </label>
           <input class="form-control" type="password" name="password" id="password-input" />
+        </div>
+        <div class="col-12 form-group">
+          {% if error_captcha %}
+          <div class="alert alert-danger alert-dismissable" role="alert">
+            <span class="sr-only">Error:</span>
+            {{ error_captcha }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">×</span></button>
+          </div>
+          {% endif %}
+          <div class="g-recaptcha" data-sitekey="6Lfv2DgUAAAAAPlycZa1tpWw9qXH2pJPXk8EKAp5"></div>
         </div>
         <div class="row pt-3">
           <div class="col-md-12">
@@ -71,5 +83,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://www.google.com/recaptcha/api.js"></script>
 {% endblock %}
 

@@ -1,4 +1,5 @@
 import base64
+import json
 
 import requests
 from flask import Blueprint
@@ -24,6 +25,16 @@ from KMActf.utils.security.signing import unserialize
 
 auth = Blueprint("auth", __name__)
 
+
+def is_human(captcha_response):
+    """ Validating recaptcha response from google server
+        Returns True captcha test passed for submitted form else returns False.
+    """
+    secret = get_app_config('RC_SECRET_KEY')
+    payload = {'response':captcha_response, 'secret':secret}
+    response = requests.post("https://www.google.com/recaptcha/api/siteverify", payload)
+    response_text = json.loads(response.text)
+    return response_text['success']
 
 @auth.route("/confirm", methods=["POST", "GET"])
 @auth.route("/confirm/<data>", methods=["POST", "GET"])
@@ -267,6 +278,11 @@ def login():
     errors = get_errors()
     if request.method == "POST":
         name = request.form["name"]
+        captcha_response = request.form['g-recaptcha-response']
+        if not is_human(captcha_response):
+            # This user exists but the password is wrong
+            error_captcha = "May deo phai la nguoi"
+            return render_template("login.html", error_captcha=error_captcha)
 
         # Check if the user submitted an email address or a team name
         if validators.validate_email(name) is True:

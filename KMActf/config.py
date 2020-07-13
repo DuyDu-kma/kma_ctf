@@ -246,6 +246,9 @@ class Config(object):
     OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
     OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
 
+    RC_SITE_KEY='6Lfv2DgUAAAAAPlycZa1tpWw9qXH2pJPXk8EKAp5'
+    RC_SECRET_KEY= '6Lfv2DgUAAAAALL-AvKvoO7E_gX-GOpogVupHeFy'
+
 
 class TestingConfig(Config):
     SECRET_KEY = "AAAAAAAAAAAAAAAAAAAA"
