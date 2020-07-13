@@ -281,7 +281,7 @@ def login():
         captcha_response = request.form['g-recaptcha-response']
         if not is_human(captcha_response):
             # This user exists but the password is wrong
-            error_captcha = "May deo phai la nguoi"
+            error_captcha = "The response parameter is missing"
             return render_template("login.html", error_captcha=error_captcha)
 
         # Check if the user submitted an email address or a team name
